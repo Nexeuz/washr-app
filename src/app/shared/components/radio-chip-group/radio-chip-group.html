@@ -1,0 +1,34 @@
+@if (label) {
+  <label class="text-[#141414] text-base font-medium leading-normal pb-1">{{ label }}</label>
+}
+<div [ngClass]="chipLayoutClasses" role="radiogroup" [attr.aria-labelledby]="label ? label + '-group-label' : null">
+  @for (option of options; track option.value; let i = $index) {
+    <label
+      [for]="name + '-' + i"
+      [ngClass]="[
+        chipLabelBaseClasses,
+        internalControl.value === option.value ? chipLabelSelectedClasses : chipLabelUnselectedClasses,
+        (option.disabled || internalControl.disabled) ? 'opacity-50 cursor-not-allowed' : ''
+      ]"
+      (click)="$event.stopPropagation()"
+    >
+      {{ option.label }}
+      <input
+        type="radio"
+        [id]="name + '-' + i"
+        [name]="name"
+        [value]="option.value"
+        [checked]="internalControl.value === option.value"
+        [disabled]="option.disabled || internalControl.disabled"
+        (change)="onChipChange(option.value)"
+        (blur)="handleBlur()"
+        class="invisible absolute"
+      />
+    </label>
+  }
+</div>
+@if (internalControl.invalid && (internalControl.dirty || internalControl.touched)) {
+  <div class="text-red-500 text-xs mt-1">
+    @if (internalControl.errors?.['required']) { <small>{{ label || 'Selection' }} is required.</small> }
+    </div>
+}

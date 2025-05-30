@@ -1,0 +1,97 @@
+<app-page-header title="Personal Data" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
+
+<div class="relative flex size-full flex-col justify-between"> <div class="flex-grow"> <div class="max-w-md mx-auto pb-6 pt-3"> <form [formGroup]="personalInfoForm" (ngSubmit)="onSave()" novalidate class="space-y-1">
+        <div class="px-4 py-3">
+          <app-input-field
+            label="Name"
+            type="text"
+            placeholder="Enter your name"
+            formControlName="name">
+          </app-input-field>
+        </div>
+        <div class="px-4 py-3">
+          <app-input-field
+            label="Date of Birth"
+            type="date"
+            placeholder="Select your date of birth"
+            formControlName="dateOfBirth"
+            [trailingIconSvg]="calendarIconSvg">
+          </app-input-field>
+        </div>
+        <div class="px-4 py-3">
+          <app-input-field
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            formControlName="email">
+          </app-input-field>
+        </div>
+        <div class="px-4 py-3">
+          <app-input-field
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            formControlName="password">
+          </app-input-field>
+        </div>
+        <div class="px-4 py-3">
+          <app-input-field
+            label="Repeat Password"
+            type="password"
+            placeholder="Repeat your password"
+            formControlName="repeatPassword">
+          </app-input-field>
+          @if (personalInfoForm.errors?.['passwordsNotMatching'] && personalInfoForm.get('repeatPassword')?.touched) {
+            <div class="text-red-500 text-xs mt-1">
+              <small>Passwords do not match.</small>
+            </div>
+          }
+        </div>
+        <div class="px-4 py-3">
+          <app-select-field
+            label="Gender"
+            formControlName="gender"
+            [options]="genderOptions"
+            defaultOptionText="Select your gender">
+          </app-select-field>
+        </div>
+      </form>
+
+      <h3 class="text-[#141414] text-xl font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Addresses</h3>
+      <div class="px-4 space-y-2">
+        @for (address of addresses(); track address.id) {
+          <app-list-item
+            [iconSvg]="address.iconSvg"
+            [title]="address.title"
+            [subtitle]="address.subtitle"
+            [showTrailingIcon]="true"
+            (itemClick)="onEditAddress(address.id)">
+          </app-list-item>
+        } @empty {
+          <p class="px-4 py-2 text-neutral-500 text-center">No addresses found. You can add one below.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="sticky bottom-0 bg-neutral-50 border-t border-neutral-200 py-3 mt-auto">
+    <div class="max-w-md mx-auto px-4">
+      <div class="flex flex-col sm:flex-row gap-3 py-2">
+        <app-button
+          text="Add Address"
+          styleType="secondary"
+          (btnClick)="onAddAddress()"
+          [fullWidth]="true"
+          customClasses="sm:w-auto">
+        </app-button>
+        <app-button
+          text="Save"
+          styleType="primary"
+          (btnClick)="onSave()"
+          [fullWidth]="true"
+          customClasses="sm:flex-1">
+          </app-button>
+      </div>
+    </div>
+    <div class="h-3 bg-neutral-50 sm:hidden"></div> </div>
+</div>

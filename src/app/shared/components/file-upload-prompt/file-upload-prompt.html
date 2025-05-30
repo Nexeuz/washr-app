@@ -1,0 +1,18 @@
+<div [ngClass]="customContainerClasses" (click)="triggerFileInput(fileInputRef)" role="button" tabindex="0" (keydown.enter)="triggerFileInput(fileInputRef)" (keydown.space)="triggerFileInput(fileInputRef)">
+  <div class="flex flex-col items-center gap-2">
+    @if (title) {
+      <p [ngClass]="customTitleClasses">{{ title }}</p>
+    }
+    @if (subtitle) {
+      <p [ngClass]="customSubtitleClasses">{{ subtitle }}</p>
+    }
+  </div>
+  <app-button
+    [text]="buttonText"
+    styleType="secondary"
+    customClasses="rounded-full !bg-neutral-200 hover:!bg-neutral-300 !shadow-sm hover:!shadow-md"
+    (click)="$event.stopPropagation(); onPromptButtonClicked(fileInputRef)"
+  >
+  </app-button>
+  <input type="file" class="hidden" #fileInputRef [accept]="accept" (change)="onFileChanged($event)" />
+</div>

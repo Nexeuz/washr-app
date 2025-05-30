@@ -1,0 +1,17 @@
+@if (label) {
+  <label class="text-[#141414] text-base font-medium leading-normal pb-1" [for]="label + '-input'">{{ label }}</label>
+}
+<div [ngClass]="wrapperDivClasses">
+  <input
+    [type]="actualInputType()"
+    [placeholder]="placeholder"
+    [formControl]="internalControl"
+    [id]="label + '-input'"
+    [ngClass]="wrapperInputClasses"
+    (focus)="handleFocus()"
+    (blur)="handleBlur()"
+  />
+  @if (isDateWithIcon() && trailingIconSvg) {
+    <div [ngClass]="trailingIconContainerClasses" [innerHTML]="trailingIconSvg | safeHtml"></div>
+  }
+</div>

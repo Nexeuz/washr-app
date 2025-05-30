@@ -1,0 +1,36 @@
+
+@if (isOpen) {
+  <div
+    class="modal-overlay fixed inset-0 z-40 flex flex-col justify-end items-stretch bg-black/50"
+    (click)="onOverlayClicked($event)"
+  >
+    <div
+      class="modal-content flex flex-col items-stretch bg-neutral-50 dark:bg-neutral-800 rounded-t-2xl shadow-2xl max-h-[85vh] w-full sm:max-w-lg mx-auto animate-slide-up"
+      (click)="$event.stopPropagation()" >
+      @if (showDragHandle) {
+        <div class="flex h-8 w-full items-center justify-center cursor-grab" (click)="requestClose()" aria-label="Close sheet">
+          <div class="h-1.5 w-10 rounded-full bg-neutral-300 dark:bg-neutral-600"></div>
+        </div>
+      }
+
+      @if (sheetTitle) {
+        <div class="px-4 pt-2 pb-3 border-b border-neutral-200 dark:border-neutral-700">
+          <h2 class="text-[#141414] dark:text-neutral-100 text-xl font-bold leading-tight tracking-[-0.015em] text-center">
+            {{ sheetTitle }}
+          </h2>
+          </div>
+      }
+
+      <div class="overflow-y-auto">
+        <div class="px-4 pt-4 pb-2">
+          <ng-content select="[sheet-body]"></ng-content>
+        </div>
+
+        @if (true) { <div class="px-4 pb-4 pt-2 mt-auto border-t border-neutral-200 dark:border-neutral-700">
+            <ng-content select="[sheet-actions]"></ng-content>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

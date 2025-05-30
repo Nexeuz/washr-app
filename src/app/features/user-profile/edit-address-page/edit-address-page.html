@@ -1,0 +1,59 @@
+<app-page-header [title]="pageTitle()" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
+
+<!--
+  The main content of this page is effectively the BottomSheet.
+  The rest of the page could be a simple backdrop or minimal UI.
+  The original edit-address.html showed the personal info form in the background.
+  If that's desired, this page's template would need to include those elements,
+  or this bottom sheet logic would be integrated into PersonalInfoPageComponent.
+  For a dedicated "edit address" page, focusing on the sheet is cleaner.
+-->
+<div class="page-content-wrapper p-4">
+  </div>
+
+<app-bottom-sheet
+  [isOpen]="isAddressSheetOpen()"
+  (closeSheet)="closeSheetAndNavigateBack()"
+  [sheetTitle]="pageTitle()"
+>
+  <div sheet-body>
+    <form [formGroup]="addressForm" class="space-y-4">
+      <app-input-field
+        label="Address Label"
+        placeholder="e.g., Home, Work, Mom's House"
+        formControlName="addressLabel">
+      </app-input-field>
+
+      <app-input-field
+        label="Address"
+        placeholder="Enter full street address"
+        formControlName="address">
+      </app-input-field>
+
+      <div>
+        <app-radio-chip-group
+          label="Address Icon"
+          formControlName="addressIcon"
+          [options]="addressIconOptions">
+        </app-radio-chip-group>
+      </div>
+    </form>
+  </div>
+
+  <div sheet-actions class="flex flex-col sm:flex-row gap-3">
+    <app-button
+      text="Cancel"
+      styleType="secondary"
+      (btnClick)="closeSheetAndNavigateBack()"
+      [fullWidth]="true"
+      customClasses="sm:flex-1">
+    </app-button>
+    <app-button
+      [text]="isEditMode() ? 'Save Changes' : 'Save Address'"
+      styleType="primary"
+      (btnClick)="onSaveAddress()"
+      [fullWidth]="true"
+      customClasses="sm:flex-1">
+      </app-button>
+  </div>
+</app-bottom-sheet>

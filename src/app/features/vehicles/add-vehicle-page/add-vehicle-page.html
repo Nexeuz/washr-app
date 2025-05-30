@@ -1,0 +1,78 @@
+<app-page-header [title]="pageTitle()" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
+
+<div class="relative flex size-full flex-col justify-between bg-white"> <div class="flex-grow"> <div class="max-w-md mx-auto pb-6 pt-3">
+      <h3 class="text-[#141414] text-lg font-semibold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
+        Vehicle 1
+      </h3>
+
+      <form [formGroup]="addVehicleForm" (ngSubmit)="onAddVehicle()" novalidate>
+        <div class="px-4"> <app-radio-chip-group
+            formControlName="vehicleType"
+            [options]="vehicleTypeOptions"
+            chipLayoutClasses="flex flex-wrap gap-3 py-4"> </app-radio-chip-group>
+        </div>
+
+        <div class="px-4 py-3">
+          <app-input-field
+            placeholder="Vehicle name"
+            formControlName="vehicleName"
+            customInputClasses="!bg-[#f2f2f2] placeholder:!text-[#757575]"> </app-input-field>
+        </div>
+
+        <div class="px-4 py-3">
+          <app-input-field
+            placeholder="License plate"
+            formControlName="licensePlate"
+            customInputClasses="!bg-[#f2f2f2] placeholder:!text-[#757575]"> </app-input-field>
+        </div>
+
+        <div class="flex items-center gap-4 bg-white px-4 min-h-14 py-3 justify-between">
+          <p class="text-[#141414] text-base font-normal leading-normal flex-1 truncate">
+            Is this vehicle a taxi?
+          </p>
+          <div class="shrink-0">
+            <app-toggle-switch formControlName="isTaxi"></app-toggle-switch>
+          </div>
+        </div>
+
+        <h3 class="text-[#141414] text-lg font-semibold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
+          Vehicle photo
+        </h3>
+        <div class="flex flex-col p-4">
+          @if (vehiclePhotoPreview()) {
+            <div class="mb-4 flex justify-center">
+              <img [src]="vehiclePhotoPreview()" alt="Vehicle photo preview" class="max-h-48 rounded-lg object-contain border border-neutral-300">
+            </div>
+          }
+          <app-file-upload-prompt
+            title="Add photo"
+            subtitle="Take a photo of your vehicle"
+            buttonText="Add photo"
+            accept="image/*"
+            (fileSelected)="onVehiclePhotoSelected($event)">
+          </app-file-upload-prompt>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="sticky bottom-0 bg-white border-t border-neutral-200 py-3 mt-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex flex-col gap-3 px-4 py-2">
+        <app-button
+          text="Add vehicle"
+          styleType="primary"
+          (btnClick)="onAddVehicle()"
+          [fullWidth]="true"
+          customClasses="rounded-full"> </app-button>
+        <app-button
+          text="Done"
+          styleType="secondary"
+          (btnClick)="onDone()"
+          [fullWidth]="true"
+          customClasses="rounded-full !bg-[#f2f2f2] !text-[#141414]"> </app-button>
+      </div>
+    </div>
+    <div class="h-3 bg-white sm:hidden"></div>
+  </div>
+</div>

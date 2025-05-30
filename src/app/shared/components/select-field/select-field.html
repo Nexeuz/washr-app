@@ -1,0 +1,25 @@
+@if (label) {
+  <label class="text-[#141414] text-base font-medium leading-normal pb-1" [for]="label + '-select'">{{ label }}</label>
+}
+<div class="relative w-full">
+  <select
+    [formControl]="internalControl"
+    [id]="label + '-select'"
+    [ngClass]="combinedSelectClasses"
+    [style.background-image]="selectArrowSvg"
+    style="background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5em 1.5em;"
+    (blur)="onBlur()"
+  >
+    @if (defaultOptionText) {
+      <option value="" disabled [selected]="internalControl.value === '' || internalControl.value === null" class="text-neutral-500">{{ defaultOptionText }}</option>
+    }
+    @for (option of options; track option.value) {
+      <option [value]="option.value" [disabled]="option.disabled" class="text-[#141414]">{{ option.label }}</option>
+    }
+  </select>
+</div>
+@if (internalControl.invalid && (internalControl.dirty || internalControl.touched)) {
+  <div class="text-red-500 text-xs mt-1">
+    @if (internalControl.errors?.['required']) { <small>{{ label || 'Selection' }} is required.</small> }
+    </div>
+}
