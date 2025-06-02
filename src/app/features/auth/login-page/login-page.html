@@ -1,54 +1,55 @@
-<div class="relative flex size-full min-h-screen flex-col bg-neutral-50 justify-between group/design-root">
-    <div class="py-8">
-        <h2
-            class="text-[#141414] tracking-light text-3xl sm:text-4xl font-bold leading-tight px-4 text-center pb-6 pt-5">
-            Welcome back
-        </h2>
-        <div class="max-w-md mx-auto">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="space-y-4">
-                <div class="px-4">
-                    <app-input-field  [validators]="emailValidators" label="Email" type="email" placeholder="Enter your email" formControlName="email">
-                    </app-input-field>
-                    <app-form-control-error [control]="loginForm.get('email')" controlName="correo">
-                    </app-form-control-error>
-                </div>
-                <div class="px-4">
-                    <app-input-field [validators]="passwordValidators"   label="Password" type="password" placeholder="Enter your password"
-                        formControlName="password">
-                    </app-input-field>
-                    <app-form-control-error  [control]="loginForm.get('password')" controlName="contraseña">
-                    </app-form-control-error>
-                </div>
-                <div class="flex px-4 pt-3">
-                    <app-button text="Log in" type="submit" styleType="primary" [fullWidth]="true"
-                        [disabled]="loginForm.invalid && loginForm.touched">
-                    </app-button>
-                </div>
-            </form>
+<div class="flex flex-col items-center justify-center min-h-screen p-4 bg-neutral-50 dark:bg-neutral-900 washr-page-container">
+  <div class="w-full max-w-md">
+    <h2 class="text-3xl sm:text-4xl font-bold text-center text-[#141414] dark:text-neutral-100 mb-8">
+      Welcome back
+    </h2>
 
-            <p class="text-neutral-500 text-sm font-normal leading-normal pb-3 pt-5 px-4 text-center">
-                Or continue with
-            </p>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="Enter your email" required>
+        @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+          <mat-error>Email is required.</mat-error>
+        }
+        @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+          <mat-error>Please enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
 
-            <div class="px-4 py-3">
-                <div class="flex flex-1 gap-3 flex-col sm:flex-row">
-                    <app-button text="Google" styleType="social" [fullWidth]="true" (btnClick)="onSocialLogin('Google')"
-                        [leadingIconSvg]="googleIconSvg">
-                    </app-button>
-                    <app-button text="Facebook" styleType="custom" [fullWidth]="true"
-                        (btnClick)="onSocialLogin('Facebook')" [leadingIconSvg]="facebookIconSvg"
-                        customClasses="!bg-[#1877F2] !text-white !border-[#1877F2] hover:!bg-[#166CDA] shadow-sm hover:shadow-md h-12 px-5 text-base font-semibold">
-                    </app-button>
-                </div>
-            </div>
-        </div>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="Enter your password" required>
+        @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+          <mat-error>Password is required.</mat-error>
+        }
+        @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
+          <mat-error>Password must be at least 6 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" class="w-full !h-12 login-button" [disabled]="loginForm.invalid">
+        Log in
+      </button>
+    </form>
+
+    <p class="text-neutral-500 dark:text-neutral-400 text-sm text-center my-6">
+      Or continue with
+    </p>
+
+    <div class="space-y-3">
+      <button mat-stroked-button class="w-full !h-12 flex items-center justify-center social-button google-button" (click)="onSocialLogin('Google')">
+        <span class="ml-2">Continue with Google</span>
+      </button>
+      <button mat-flat-button class="w-full !h-12 flex items-center justify-center facebook-button social-button" (click)="onSocialLogin('Facebook')">
+        <span class="ml-2">Continue with Facebook</span>
+      </button>
     </div>
 
-    <div class="pb-4">
-        <p class="text-neutral-500 text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
-            Don't have an account? <a routerLink="/auth/sign-in"
-                class="underline hover:text-neutral-700 font-medium">Sign up</a>
-        </p>
-        <div class="h-5 bg-neutral-50"></div>
-    </div>
+    <p class="text-neutral-500 dark:text-neutral-400 text-sm text-center mt-8">
+      Don't have an account?
+      <a routerLink="/auth/sign-in" class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+        Sign up
+      </a>
+    </p>
+  </div>
 </div>

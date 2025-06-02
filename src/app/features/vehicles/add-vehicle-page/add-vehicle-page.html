@@ -1,78 +1,86 @@
-<app-page-header [title]="pageTitle()" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
+<app-page-header [title]="pageTitle" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
 
-<div class="relative flex size-full flex-col justify-between bg-white"> <div class="flex-grow"> <div class="max-w-md mx-auto pb-6 pt-3">
-      <h3 class="text-[#141414] text-lg font-semibold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
-        Vehicle 1
-      </h3>
+<div class="flex flex-col justify-between flex-grow bg-white dark:bg-neutral-800 washr-page-container">
+  <div class="flex-grow p-4"> <div class="max-w-md mx-auto">
+      <h3 class="text-[#141414] dark:text-neutral-100 text-lg font-semibold mb-2 pt-2">
+        Vehicle Information </h3>
 
       <form [formGroup]="addVehicleForm" (ngSubmit)="onAddVehicle()" novalidate>
-        <div class="px-4"> <app-radio-chip-group
+        <div class="py-2">
+          <label id="vehicle-type-label" class="block text-base font-medium text-[#141414] dark:text-neutral-200 mb-1">Vehicle Type</label>
+          <mat-radio-group
             formControlName="vehicleType"
-            [options]="vehicleTypeOptions"
-            chipLayoutClasses="flex flex-wrap gap-3 py-4"> </app-radio-chip-group>
+            aria-labelledby="vehicle-type-label"
+            class="flex flex-wrap gap-x-4 gap-y-2"
+            required>
+            @for (option of vehicleTypeOptions; track option.value) {
+              <mat-radio-button [value]="option.value" color="primary">{{option.viewValue}}</mat-radio-button>
+            }
+          </mat-radio-group>
+          @if (addVehicleForm.get('vehicleType')?.hasError('required') && addVehicleForm.get('vehicleType')?.touched) {
+            <div class="text-xs text-red-500 dark:text-red-400 mt-1">Vehicle type is required.</div>
+          }
         </div>
 
-        <div class="px-4 py-3">
-          <app-input-field
-            placeholder="Vehicle name"
-            formControlName="vehicleName"
-            customInputClasses="!bg-[#f2f2f2] placeholder:!text-[#757575]"> </app-input-field>
+        <mat-form-field appearance="outline" class="w-full mt-4 custom-form-field-bg">
+          <mat-label>Vehicle name</mat-label>
+          <input matInput formControlName="vehicleName" placeholder="e.g., My Sedan, Red Bike" required>
+          @if (addVehicleForm.get('vehicleName')?.hasError('required') && addVehicleForm.get('vehicleName')?.touched) {
+            <mat-error>Vehicle name is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full mt-4 custom-form-field-bg">
+          <mat-label>License plate</mat-label>
+          <input matInput formControlName="licensePlate" placeholder="Enter license plate" required>
+          @if (addVehicleForm.get('licensePlate')?.hasError('required') && addVehicleForm.get('licensePlate')?.touched) {
+            <mat-error>License plate is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="flex items-center justify-between min-h-[56px] py-3 mt-4">
+          <span class="text-[#141414] dark:text-neutral-100 text-base">Is this vehicle a taxi?</span>
+          <mat-slide-toggle formControlName="isTaxi" color="primary"></mat-slide-toggle>
         </div>
 
-        <div class="px-4 py-3">
-          <app-input-field
-            placeholder="License plate"
-            formControlName="licensePlate"
-            customInputClasses="!bg-[#f2f2f2] placeholder:!text-[#757575]"> </app-input-field>
-        </div>
-
-        <div class="flex items-center gap-4 bg-white px-4 min-h-14 py-3 justify-between">
-          <p class="text-[#141414] text-base font-normal leading-normal flex-1 truncate">
-            Is this vehicle a taxi?
-          </p>
-          <div class="shrink-0">
-            <app-toggle-switch formControlName="isTaxi"></app-toggle-switch>
-          </div>
-        </div>
-
-        <h3 class="text-[#141414] text-lg font-semibold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
-          Vehicle photo
+        <h3 class="text-[#141414] dark:text-neutral-100 text-lg font-semibold mt-6 mb-2">
+          Vehicle photo(s)
         </h3>
-        <div class="flex flex-col p-4">
-          @if (vehiclePhotoPreview()) {
-            <div class="mb-4 flex justify-center">
-              <img [src]="vehiclePhotoPreview()" alt="Vehicle photo preview" class="max-h-48 rounded-lg object-contain border border-neutral-300">
+        <div class="flex flex-col">
+          @if (vehiclePhotoPreviews().length > 0) {
+            <div class="mb-4 flex flex-wrap justify-center gap-2 p-2 border border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg">
+              @for (preview of vehiclePhotoPreviews(); track $index) {
+                <img [src]="preview" alt="Vehicle photo preview {{$index + 1}}" class="h-20 w-20 object-cover rounded border border-neutral-200 dark:border-neutral-700">
+              }
+              @if (selectedVehiclePhotos() && selectedVehiclePhotos()!.length > vehiclePhotoPreviews().length) {
+                <div class="flex items-center justify-center h-20 w-20 bg-neutral-100 dark:bg-neutral-700 rounded border border-neutral-300 dark:border-neutral-600 text-neutral-500 dark:text-neutral-300 text-sm">
+                  +{{ selectedVehiclePhotos()!.length - vehiclePhotoPreviews().length }} more
+                </div>
+              }
             </div>
           }
           <app-file-upload-prompt
-            title="Add photo"
-            subtitle="Take a photo of your vehicle"
-            buttonText="Add photo"
+            title="Add photo(s)"
+            subtitle="Take or upload pictures of your vehicle"
+            buttonText="Choose Photos"
             accept="image/*"
-            (fileSelected)="onVehiclePhotoSelected($event)">
+            [multiple]="true" (filesSelected)="onVehiclePhotosSelected($event)">
           </app-file-upload-prompt>
         </div>
       </form>
     </div>
   </div>
 
-  <div class="sticky bottom-0 bg-white border-t border-neutral-200 py-3 mt-auto">
-    <div class="max-w-md mx-auto">
-      <div class="flex flex-col gap-3 px-4 py-2">
-        <app-button
-          text="Add vehicle"
-          styleType="primary"
-          (btnClick)="onAddVehicle()"
-          [fullWidth]="true"
-          customClasses="rounded-full"> </app-button>
-        <app-button
-          text="Done"
-          styleType="secondary"
-          (btnClick)="onDone()"
-          [fullWidth]="true"
-          customClasses="rounded-full !bg-[#f2f2f2] !text-[#141414]"> </app-button>
+  <div class="sticky bottom-0 bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 py-3 mt-auto">
+    <div class="max-w-md mx-auto px-4">
+      <div class="flex flex-col gap-3 py-2">
+        <button mat-raised-button color="primary" (click)="onAddVehicle()" class="w-full !h-12 rounded-full login-button">
+          Add vehicle
+        </button>
+        <button mat-stroked-button (click)="onDone()" class="w-full !h-12 rounded-full action-button custom-done-button">
+          Done
+        </button>
       </div>
     </div>
-    <div class="h-3 bg-white sm:hidden"></div>
   </div>
 </div>

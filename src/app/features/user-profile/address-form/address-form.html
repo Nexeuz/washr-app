@@ -1,0 +1,40 @@
+<div class="p-6"> <h2 class="text-xl font-bold mb-6 text-center text-[#141414] dark:text-neutral-100">{{ pageTitle }}</h2>
+  <form [formGroup]="addressForm" (ngSubmit)="onSave()" class="space-y-4">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Address Label</mat-label>
+      <input matInput formControlName="addressLabel" placeholder="e.g., Home, Work" required>
+      @if (addressForm.get('addressLabel')?.hasError('required') && addressForm.get('addressLabel')?.touched) {
+        <mat-error>Address label is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address" placeholder="Enter full street address" required>
+      @if (addressForm.get('address')?.hasError('required') && addressForm.get('address')?.touched) {
+        <mat-error>Address is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="mt-3">
+      <label id="address-icon-group-label" class="block text-base font-medium text-[#141414] dark:text-neutral-200 mb-2">Address Icon</label>
+      <mat-radio-group formControlName="addressIcon" aria-labelledby="address-icon-group-label" class="flex flex-wrap gap-x-4 gap-y-2" required>
+        @for (option of addressIconOptions; track option.value) {
+          <mat-radio-button [value]="option.value" color="primary">
+            <mat-icon class="mr-1 align-middle">{{option.iconName}}</mat-icon> {{option.label}}
+          </mat-radio-button>
+        }
+      </mat-radio-group>
+      @if (addressForm.get('addressIcon')?.hasError('required') && addressForm.get('addressIcon')?.touched) {
+        <div class="text-xs text-red-500 dark:text-red-400 mt-1">Icon selection is required.</div>
+      }
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 pt-6">
+      <button mat-stroked-button type="button" (click)="onCancel()" class="w-full sm:flex-1 !h-12 action-button">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" class="w-full sm:flex-1 !h-12 login-button">
+        {{ isEditMode ? 'Save Changes' : 'Save Address' }}
+      </button>
+    </div>
+  </form>
+</div>

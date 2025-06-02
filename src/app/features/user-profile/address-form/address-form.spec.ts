@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RadioChipGroup } from './radio-chip-group';
+import { AddressForm } from './address-form';
 
-describe('RadioChipGroup', () => {
-  let component: RadioChipGroup;
-  let fixture: ComponentFixture<RadioChipGroup>;
+describe('AddressForm', () => {
+  let component: AddressForm;
+  let fixture: ComponentFixture<AddressForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RadioChipGroup]
+      imports: [AddressForm]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RadioChipGroup);
+    fixture = TestBed.createComponent(AddressForm);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

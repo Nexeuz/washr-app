@@ -39,13 +39,17 @@ export const routes: Routes = [
       {
         path: 'personal-info', // Full path: /profile/personal-info
         loadComponent: () =>
-          import('./features/user-profile/personal-info-page/personal-info-page').then((m) => m.PersonalInfoPageComponent),
+          import(
+            './features/user-profile/personal-info-page/personal-info-page'
+          ).then((m) => m.PersonalInfoPageComponent),
         title: 'Personal Information - Washr App'
       },
       {
         path: 'edit-address', // Full path: /profile/edit-address
         loadComponent: () =>
-          import('./features/user-profile/edit-address-page/edit-address-page').then((m) => m.EditAddressPageComponent),
+          import(
+            './features/user-profile/edit-address-page/edit-address-page'
+          ).then((m) => m.EditAddressPageComponent),
         title: 'Edit Address - Washr App'
       },
       // Example for editing a specific address if you implement that

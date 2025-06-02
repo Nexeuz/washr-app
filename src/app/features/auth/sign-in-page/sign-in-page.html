@@ -1,43 +1,29 @@
-<div class="relative flex size-full min-h-screen flex-col bg-neutral-50 justify-between group/design-root">
-  <div class="py-8">
-    <div class="flex items-center bg-neutral-50 p-4 pb-2 justify-center sticky top-0 z-10">
-      <h2 class="text-[#141414] text-2xl font-bold leading-tight tracking-[-0.015em]">
-        Washr
+<div class="flex flex-col items-center justify-between min-h-screen p-4 sm:p-6 md:p-8 bg-neutral-50 dark:bg-neutral-900 washr-page-container">
+  <div class="w-full max-w-md text-center mb-8 sm:mb-12 md:mb-16"> <div class="py-8"> <h2 class="text-[#141414] dark:text-neutral-100 text-2xl font-bold leading-tight tracking-[-0.015em] mb-6 sm:mb-8 md:mb-10"> Washr
+      </h2>
+      <h2 class="text-[#141414] dark:text-neutral-100 tracking-light text-3xl sm:text-4xl font-bold leading-tight">
+        Get started
       </h2>
     </div>
-    <h2 class="text-[#141414] tracking-light text-3xl sm:text-4xl font-bold leading-tight px-4 text-center pb-8 pt-10">
-      Get started
-    </h2>
   </div>
 
-  <div class="pb-4">
-    <div class="flex justify-center">
-      <div class="flex flex-1 gap-4 max-w-md flex-col items-stretch px-4 py-3">
-        <app-button
-          text="Continue with Google"
-          styleType="social"
-          [fullWidth]="true"
-          (btnClick)="onContinueWith('Google')"
-          customClasses="text-base font-semibold">
-          </app-button>
-        <app-button
-          text="Continue with Facebook"
-          styleType="custom"
-          [fullWidth]="true"
-          (btnClick)="onContinueWith('Facebook')"
-          customClasses="!bg-[#1877F2] !text-white !border-[#1877F2] hover:!bg-[#166CDA] shadow-sm hover:shadow-md h-12 px-5 text-base font-semibold">
-          </app-button>
-        <app-button
-          text="Continue with Email"
-          styleType="primary"
-          [fullWidth]="true"
-          (btnClick)="onContinueWith('Email')"
-          customClasses="text-base font-bold">
-          </app-button>
-      </div>
+  <div class=" max-w-md pb-4">
+    <div class="!space-y-4"> 
+      <button mat-stroked-button class="w-full !h-12 social-button google-button" (click)="onContinueWith('Google')">
+        Continue with Google
+      </button>
+      <button mat-flat-button class="w-full !h-12 facebook-button social-button" (click)="onContinueWith('Facebook')">
+        Continue with Facebook
+      </button>
+      <button mat-raised-button color="primary" class="w-full !h-12 login-button" (click)="onContinueWith('Email')">
+        Continue with Email
+      </button>
     </div>
-
-    <p class="text-neutral-500 text-sm font-normal leading-normal pb-3 pt-6 px-4 text-center">
-      Already have an account? <a routerLink="/auth/login" class="underline hover:text-neutral-700 font-medium">Log in</a>
+    <p class="text-neutral-500 dark:text-neutral-400 text-sm text-center mt-8 sm:mt-10"> Already have an account?
+      <a routerLink="/auth/login" class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+        Log in
+      </a>
     </p>
-    <div class="h-5 bg-neutral-50"></div> </div>
+  </div>
+
+  <div class="h-5 sm:h-8"></div> </div>

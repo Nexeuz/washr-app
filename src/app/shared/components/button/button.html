@@ -1,6 +1,0 @@
-<button [type]="type" [ngClass]="computedButtonClasses" (click)="onClick($event)" [disabled]="disabled">
-  @if (leadingIconSvg) {
-    <app-icon [svgContent]="leadingIconSvg" hostClasses="mr-2 fill-current"></app-icon>
-  }
-  <span class="truncate">{{ text }}</span>
-</button>

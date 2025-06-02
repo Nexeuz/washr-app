@@ -1,0 +1,6 @@
+.custom-list-item-clickable {
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04); // Standard Material hover for list items
+  }
+}

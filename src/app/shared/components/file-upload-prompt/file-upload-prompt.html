@@ -7,12 +7,39 @@
       <p [ngClass]="customSubtitleClasses">{{ subtitle }}</p>
     }
   </div>
-  <app-button
-    [text]="buttonText"
-    styleType="secondary"
-    customClasses="rounded-full !bg-neutral-200 hover:!bg-neutral-300 !shadow-sm hover:!shadow-md"
-    (click)="$event.stopPropagation(); onPromptButtonClicked(fileInputRef)"
-  >
-  </app-button>
-  <input type="file" class="hidden" #fileInputRef [accept]="accept" (change)="onFileChanged($event)" />
+
+  @if (filePreviews().length > 0) {
+    <div class="mt-4 flex flex-wrap justify-center gap-2">
+      @for (preview of filePreviews(); track $index) {
+        <img [src]="preview" alt="Selected file preview {{$index + 1}}" class="h-20 w-20 object-cover rounded border border-neutral-300 dark:border-neutral-600">
+      }
+      @if (selectedFileCount() > filePreviews().length && selectedFileCount() > maxPreviews) {
+        <div class="flex items-center justify-center h-20 w-20 bg-neutral-100 dark:bg-neutral-700 rounded border border-neutral-300 dark:border-neutral-600 text-neutral-500 dark:text-neutral-300 text-sm">
+          +{{ selectedFileCount() - filePreviews().length }} more
+        </div>
+      }
+    </div>
+  }
+  @if (selectedFileCount() > 0) {
+    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">{{ selectedFileCount() }} file(s) selected</p>
+  }
+
+  <button
+    mat-stroked-button
+    type="button"
+    class="mt-4 custom-choose-photos-button"
+    (click)="$event.stopPropagation(); onPromptButtonClicked(fileInputRef)">
+    @if(buttonIcon) {
+      <mat-icon>{{ buttonIcon }}</mat-icon>
+    }
+    <span>{{ buttonText }}</span>
+  </button>
+
+  <input
+    type="file"
+    class="hidden"
+    #fileInputRef
+    [accept]="accept"
+    [multiple]="multiple"
+    (change)="onFileChanged($event)" />
 </div>

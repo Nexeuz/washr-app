@@ -1,35 +1,16 @@
-<div class="flex items-center p-4 pb-3 h-16"> @if (showBackButton) {
-    <button
-      type="button"
-      (click)="onBackClicked()"
-      [attr.aria-label]="backButtonAriaLabel"
-      class="text-[#141414] dark:text-neutral-200 flex size-10 shrink-0 items-center justify-center hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full transition-colors"
-    >
-      <app-icon [svgContent]="backButtonSvg"></app-icon>
+<mat-toolbar class="page-header-toolbar dark:!bg-neutral-800"> @if (showBackButton) {
+    <button mat-icon-button (click)="onBackClicked()" [attr.aria-label]="backButtonAriaLabel" class="page-header-back-button">
+      <mat-icon>{{ backButtonIconName }}</mat-icon>
     </button>
   } @else {
-    <div class="size-10 shrink-0"></div>
-  }
+    <div class="w-10 sm:w-12"></div> }
 
-  @if (title) {
-          <!--
-        If there's a back button, we need to account for its space on the left to keep the title truly centered.
-        However, with flex-1 on the title and symmetrical placeholders/buttons, text-center should suffice.
-        The pr-10 was to offset the back button's width if the title wasn't flex-1.
-        With flex-1 and a placeholder on the right (or another button), text-center works well.
-      -->
-    <h2
-      class="text-[#141414] dark:text-neutral-100 text-xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center"
+  <span class="flex-auto text-center page-header-title">{{ title }}</span>
 
-    >
-      {{ title }}
-    </h2>
-  }
-
-  <!--
-    Optional: Add a placeholder or an actions slot on the right if needed
-    to perfectly balance the title when the back button is present.
-    For now, flex-1 on the title and text-center should handle most cases.
-    If you had right-side actions, you'd add another div here.
-  -->
-   <div class="size-10 shrink-0"></div> </div>
+  @if (showActionsSlot) {
+    <div class="page-header-actions">
+      <ng-content select="[page-header-actions]"></ng-content>
+    </div>
+  } @else {
+    <div class="w-10 sm:w-12"></div> }
+</mat-toolbar>
