@@ -52,4 +52,9 @@
       </a>
     </p>
   </div>
+  @if (loginError()) {
+  <p class="text-red-500 text-sm text-center my-2 p-2 bg-red-100 rounded-md">{{ loginError() }}</p>
+}
+
+
 </div>

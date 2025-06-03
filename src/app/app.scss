@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; // Make toolbar sticky
+  top: 0;
+  z-index: 1000; // Ensure it's above other content
+}
+
+.app-title {
+  text-decoration: none;
+  color: inherit; // Inherit color from toolbar (e.g., white if toolbar is primary)
+  font-weight: 500; // Example
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.user-display {
+  font-size: 0.9em;
+  margin-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; // Adjust as needed
+  // Ensure text color is readable on primary toolbar background
+  // color: var(--mat-toolbar-primary-text-color, white); // Example
+}
+
+.app-content-container {
+  flex: 1; // Allows the router-outlet container to fill remaining space
+  // Add padding here if you want global padding for all pages,
+  // or handle padding within individual page components.
+  // padding: 1rem; // Example global padding
+}

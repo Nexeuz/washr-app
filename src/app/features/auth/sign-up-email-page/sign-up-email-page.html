@@ -1,0 +1,30 @@
+<app-page-header title="Sign Up with Email" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
+<div class="flex flex-col items-center justify-center p-4 bg-neutral-50 dark:bg-neutral-900 washr-page-container flex-grow">
+  <div class="w-full max-w-md">
+    <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()" class="space-y-6">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Full Name (Optional)</mat-label>
+        <input matInput formControlName="displayName" placeholder="Enter your full name">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="Enter your email" required>
+        @if (signUpForm.get('email')?.hasError('required') && signUpForm.get('email')?.touched) { <mat-error>Email is required.</mat-error> }
+        @if (signUpForm.get('email')?.hasError('email') && signUpForm.get('email')?.touched) { <mat-error>Invalid email.</mat-error> }
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="Choose a password" required>
+        @if (signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched) { <mat-error>Password is required.</mat-error> }
+        @if (signUpForm.get('password')?.hasError('minlength') && signUpForm.get('password')?.touched) { <mat-error>Password minimum 6 characters.</mat-error> }
+      </mat-form-field>
+      @if (signUpError()) {
+        <p class="text-red-500 text-sm text-center my-2 p-2 bg-red-100 rounded-md">{{ signUpError() }}</p>
+      }
+      <button mat-raised-button color="primary" type="submit" class="w-full !h-12 login-button" [disabled]="signUpForm.invalid">Sign Up</button>
+    </form>
+    <p class="text-neutral-500 dark:text-neutral-400 text-sm text-center mt-8">
+      Already have an account? <a routerLink="/auth/login" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Log in</a>
+    </p>
+  </div>
+</div>

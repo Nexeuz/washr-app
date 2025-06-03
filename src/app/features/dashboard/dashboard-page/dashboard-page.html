@@ -1,0 +1,61 @@
+<div class="dashboard-container">
+  <app-page-header title="AutoCare" [showBackButton]="false" [showActionsSlot]="true">
+    <ng-container page-header-actions>
+      <button mat-icon-button (click)="onSettingsClick()" aria-label="Settings" class="settings-button">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </ng-container>
+  </app-page-header>
+
+  <main class="dashboard-content">
+    <h2 class="welcome-message">
+      Welcome back, {{ userName() }}
+    </h2>
+
+    <div class="service-cards-container">
+      @for (card of serviceCards(); track card.id) {
+        <mat-card class="service-card">
+          <div
+            class="service-card-image"
+            [style.background-image]="'url(' + card.imageUrl + ')'"
+            role="img" [attr.aria-label]="card.title + ' image'">
+          </div>
+          <mat-card-content class="service-card-content">
+            <h3 class="service-card-title">
+              {{ card.title }}
+            </h3>
+            <div class="service-card-details">
+              <p class="service-card-description">
+                {{ card.description }}
+              </p>
+              <button
+                mat-flat-button
+                color="primary"
+                class="service-card-button"
+                (click)="handleCardAction(card)">
+                <span class="truncate">{{ card.buttonText }}</span>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </main>
+
+  <mat-toolbar class="bottom-nav-toolbar">
+    <div class="bottom-nav-inner-container">
+      @for (item of bottomNavItems(); track item.route) {
+        <button
+          mat-icon-button
+          class="bottom-nav-item"
+          [class.active-nav-item]="item.isActive"
+          (click)="onBottomNavItemClick(item)"
+          [attr.aria-label]="item.label"
+          matRipple [matRippleUnbounded]="false">
+          <mat-icon class="bottom-nav-icon">{{ item.icon }}</mat-icon>
+          <span class="bottom-nav-label">{{ item.label }}</span>
+        </button>
+      }
+    </div>
+  </mat-toolbar>
+  <div class="bottom-nav-spacer"></div> </div>

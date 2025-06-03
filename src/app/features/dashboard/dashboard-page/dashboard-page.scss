@@ -1,0 +1,212 @@
+:host(.dashboard-page-host) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--mat-app-background-color, #f9fafb); // From Material theme
+  color: var(--mat-app-text-color, #141414); // From Material theme
+}
+
+// Container for the entire dashboard page content and bottom nav
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; // Takes up available vertical space
+  position: relative; // For fixed bottom nav spacer
+}
+
+// Main content area that scrolls
+.dashboard-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem; // p-4
+  @media (min-width: 640px) { // sm breakpoint
+    padding: 1.5rem; // p-6
+  }
+  @media (min-width: 768px) { // md breakpoint
+    padding: 2rem; // p-8
+  }
+}
+
+// Welcome Message (Original: text-[#141414] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5)
+.welcome-message {
+  font-family: "Space Grotesk", sans-serif; // Assuming this is your headline font
+  font-size: 1.375rem; // 22px
+  font-weight: 700; // bold
+  line-height: 1.2; // tight
+  letter-spacing: -0.015em;
+  margin-bottom: 1.25rem; // mb-5
+  // color: #141414; // Should be inherited from body or Material theme's text color
+}
+
+// Service Cards Container (Original: space-y-6)
+.service-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // space-y-6
+}
+
+.service-card {
+  // mat-card already provides rounded corners and shadow.
+  // Original: rounded-xl overflow-hidden
+  // background-color: var(--mat-card-background-color, white); // Material handles this
+  // color: var(--mat-card-text-color); // Material handles this
+
+  // If using @xl:flex-row from original HTML for larger screens:
+  @media (min-width: 1280px) { // xl breakpoint
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; // Or center
+  }
+}
+
+.service-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 9; // aspect-video
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0.75rem 0.75rem 0 0; // rounded-xl top only if card is column
+  @media (min-width: 1280px) { // xl breakpoint
+    width: 40%; // Example width for image in row layout
+    min-width: 18rem; // min-w-72
+    aspect-ratio: auto; // Let height be determined by content or fixed height
+    height: auto; // Or a fixed height like 12rem, 14rem etc.
+    border-radius: 0.75rem 0 0 0.75rem; // Rounded left
+  }
+}
+
+.service-card-content {
+  padding: 1rem; // p-4
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; // Allows content to take space in flex row
+  gap: 0.25rem; // gap-1
+  @media (min-width: 1280px) { // xl breakpoint
+    padding-left: 1rem; // px-4
+    padding-right: 1rem;
+  }
+}
+
+.service-card-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.125rem; // text-lg
+  font-weight: 700; // font-bold
+  line-height: 1.2; // tight
+  letter-spacing: -0.015em;
+  margin-bottom: 0.25rem; // mb-1
+  // color: #141414; // Inherited
+}
+
+.service-card-details {
+  display: flex;
+  flex-direction: column; // Stack description and button on mobile
+  align-items: flex-start; // Align items to the start on mobile
+  justify-content: space-between;
+  gap: 0.75rem; // gap-3
+  flex-grow: 1;
+
+  @media (min-width: 640px) { // sm breakpoint, or adjust as needed
+    flex-direction: row;
+    align-items: flex-end; // Align button to bottom on larger screens
+  }
+}
+
+.service-card-description {
+  // color: #757575; // text-neutral-500
+  font-size: 1rem; // text-base
+  font-weight: 400; // font-normal
+  line-height: 1.5; // leading-normal
+  flex-grow: 1; // Allow description to take available space
+}
+
+.service-card-button {
+  // mat-flat-button color="primary" will use your theme.
+  // Original: rounded-full h-8 px-4 bg-black text-neutral-50 text-sm font-medium
+  height: 2rem !important; // !h-8
+  min-width: auto !important; // Allow it to shrink
+  padding: 0 1rem !important; // px-4
+  border-radius: 9999px !important; // rounded-full
+  line-height: normal !important; // Reset line height for small buttons
+
+  .mdc-button__label, span { // Target the inner label for font size
+    font-size: 0.875rem !important; // text-sm
+    font-weight: 500 !important; // font-medium
+  }
+  // Ensure it aligns to the end on mobile if stacked vertically
+  align-self: flex-end;
+  @media (min-width: 640px) {
+    align-self: auto; // Reset for row layout
+  }
+}
+
+// Bottom Navigation Bar
+.bottom-nav-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4rem; // h-16
+  // background-color: #f9fafb; // bg-neutral-50 from original
+  // border-top: 1px solid #ededed; // border-[#ededed] from original
+  // These colors should come from Material theme (surface, on-surface for border)
+  // If not, override here:
+  // background-color: var(--mat-toolbar-container-background-color, #f9fafb);
+  // border-top: 1px solid var(--mat-divider-color, #ededed);
+  padding: 0.5rem 1rem 0.75rem 1rem; // pt-2 px-4 pb-3 from original
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.05); // Optional shadow
+}
+
+.bottom-nav-inner-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; // Vertically center icon and text
+  height: 100%;
+  flex: 1; // For equal width distribution
+  padding: 0.25rem 0; // gap-1 equivalent (adjust padding for desired gap)
+  cursor: pointer;
+  text-align: center;
+  // color: #757575; // text-neutral-500 from original
+  color: var(--mat-icon-button-icon-color, rgba(0,0,0,0.54)); // Default Material icon button color
+
+  &.active-nav-item {
+    // color: #141414; // text-[#141414] from original for active
+    color: var(--mdc-theme-primary, black); // Use primary theme color for active
+  }
+}
+
+.bottom-nav-icon {
+  // Original: h-8 flex items-center justify-center
+  // Mat-icon size is controlled by font-size
+  font-size: 24px; // data-size="24px"
+  width: 24px;
+  height: 24px;
+  margin-bottom: 0.125rem; // Small space between icon and label
+}
+
+.bottom-nav-label {
+  font-size: 0.75rem; // text-xs
+  font-weight: 500; // font-medium
+  letter-spacing: 0.015em; // tracking-[0.015em]
+  line-height: 1; // Ensure tight line height
+}
+
+// Spacer for the fixed bottom navigation bar
+.bottom-nav-spacer {
+  height: 4rem; // Must match .bottom-nav-toolbar height
+  flex-shrink: 0;
+}
+
+// Settings button in page header
+.settings-button {
+  // color: #141414; // text-[#141414] from original
+  // This should inherit color from toolbar or be themed
+}

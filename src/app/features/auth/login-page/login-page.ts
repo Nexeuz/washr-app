@@ -1,13 +1,14 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 // Angular Material Modules/Components
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../core/services/auth';
 
 interface LoginForm {
   email: FormControl<string | null>;
@@ -32,8 +33,13 @@ interface LoginForm {
 })
 export class LoginPageComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  loginForm!: FormGroup<LoginForm>;
+  loginForm!: FormGroup<LoginForm>; // Keep your LoginForm interface
+  loginError = signal<string | null>(null);
+
+
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -42,17 +48,30 @@ export class LoginPageComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
+    this.loginError.set(null);
+    this.loginForm.markAllAsTouched();
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      console.log('Login Page - Form Submitted:', { email, password });
-    } else {
-      this.loginForm.markAllAsTouched();
-      console.log('Login Page - Form is invalid');
+      if (email && password) {
+        try {
+          await this.authService.loginWithEmailPassword(email, password);
+          this.router.navigate(['/profile/personal-info']); // Or your main app page
+        } catch (error: any) {
+          this.loginError.set(this.authService.mapFirebaseError(error.code));
+        }
+      }
     }
   }
-
-  onSocialLogin(provider: 'Google' | 'Facebook'): void {
-    console.log(`Login Page - Attempting social login with ${provider}`);
+  
+  async onSocialLogin(provider: 'Google' | 'Facebook'): Promise<void> {
+    this.loginError.set(null);
+    try {
+      if (provider === 'Google') await this.authService.loginWithGoogle();
+      else if (provider === 'Facebook') await this.authService.loginWithFacebook();
+      this.router.navigate(['/profile/personal-info']); // Or your main app page
+    } catch (error: any) {
+      this.loginError.set(this.authService.mapFirebaseError(error.code));
+    }
   }
 }

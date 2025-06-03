@@ -1,6 +1,15 @@
-<!--
-  This is the main application shell.
-  The <router-outlet> directive is where Angular will render the components
-  that match the current route defined in app.routes.ts.
--->
-<router-outlet></router-outlet>
+<mat-toolbar color="primary" class="app-toolbar">
+  <a routerLink="/" class="app-title">Washr App</a>
+  <span class="toolbar-spacer"></span>
+  @if (currentUser()) {
+    <span class="user-display">{{ currentUser()?.displayName || currentUser()?.email }}</span>
+    <button mat-icon-button (click)="logout()" aria-label="Logout">
+      <mat-icon>logout</mat-icon> </button>
+  } @else {
+    <a mat-button routerLink="/auth/login">Login</a>
+    <a mat-button routerLink="/auth/sign-in">Get Started</a> }
+</mat-toolbar>
+
+<div class="app-content-container">
+  <router-outlet></router-outlet>
+</div>
