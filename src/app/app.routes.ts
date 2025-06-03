@@ -45,19 +45,10 @@ export const routes: Routes = [
         title: 'Personal Information - Washr App'
       },
       {
-        path: 'edit-address', // Full path: /profile/edit-address
-        loadComponent: () =>
-          import(
-            './features/user-profile/edit-address-page/edit-address-page'
-          ).then((m) => m.EditAddressPageComponent),
+        path: 'edit-address/:id',
+        loadComponent: () => import('./features/user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
         title: 'Edit Address - Washr App'
       },
-      // Example for editing a specific address if you implement that
-      // {
-      //   path: 'edit-address/:id',
-      //   loadComponent: () => import('./features/user-profile/edit-address-page/edit-address-page.component').then(m => m.EditAddressPageComponent),
-      //   title: 'Edit Address - Washr App'
-      // },
     ],
   },
 

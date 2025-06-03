@@ -90,14 +90,14 @@ export class PersonalInfoPageComponent implements OnInit {
   addresses = signal<AddressDisplayItem[]>([
     { id: '1', iconName: 'home', title: '789 Maple Drive, Anytown, USA', subtitle: 'Primary Address' },
     { id: '2', iconName: 'work', title: '101 Pine Lane, Business City, USA', subtitle: 'Secondary Address' },
+        { id: '3', iconName: 'work', title: '101 Pine Lane, Business City, USA', subtitle: 'Secondary Address' },
+
   ]);
 
   // Options for the gender select dropdown
   genderOptions: GenderOption[] = [
     { value: 'male', viewValue: 'Male' },
-    { value: 'female', viewValue: 'Female' },
-    { value: 'other', viewValue: 'Other' },
-    { value: 'prefer_not_to_say', viewValue: 'Prefer not to say' },
+    { value: 'female', viewValue: 'Female' }
   ];
 
   constructor() {}

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -18,8 +18,9 @@ export class EditAddressPageComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private bottomSheet = inject(MatBottomSheet);
+  private cd = inject(ChangeDetectorRef);
 
-  pageHeaderTitle = signal('Manage Address');
+  pageHeaderTitle = signal('Administrar direcciones');
   editingAddressId = signal<string | null>(null);
   private routeSub?: Subscription;
 
@@ -27,7 +28,11 @@ export class EditAddressPageComponent implements OnInit, OnDestroy {
     this.routeSub = this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       this.editingAddressId.set(id);
+      setTimeout(() => {
       this.openAddressSheet(id);
+
+      })
+
     });
   }
 
