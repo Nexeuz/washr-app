@@ -1,118 +1,119 @@
 :host(.sign-in-page-host) {
-  display: block; // Ensures the host element takes up space correctly
-  // background-color: var(--mat-app-background-color, #f9fafb); // Handled by body styles or .sign-in-page-container
-  // color: var(--mat-app-text-color, #141414); // Handled by body styles or .sign-in-page-container
+  display: block;
 }
 
 .sign-in-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between; // Pushes top and bottom content apart
+  justify-content: space-between;
   min-height: 100vh;
-  padding: 1rem; // p-4
-  box-sizing: border-box; // Ensure padding doesn't add to min-height affecting scroll
-  background-color: var(--mat-app-background-color, #f9fafb); // Or your specific neutral-50 equivalent
+  padding: 1rem; // p-4 base (16px)
+  box-sizing: border-box;
+  background-color: var(--mat-app-background-color, #f9fafb);
 
-  // Dark mode styles (assuming your theme sets CSS variables for dark mode)
-  // Or use @media (prefers-color-scheme: dark)
-  &.dark-theme { // Add this class to body or html if you toggle themes manually
-    background-color: var(--mat-app-background-color-dark, #121212); // Example dark bg
-    color: var(--mat-app-text-color-dark, #e0e0e0); // Example dark text
+  @media (min-width: 640px) { // sm breakpoint
+    padding: 1.5rem; // 24px
+  }
+  @media (min-width: 768px) { // md breakpoint
+    padding: 2rem; // 32px
   }
 }
 
 .content-wrapper {
   width: 100%;
-  max-width: 28rem; // max-w-md
+  max-width: 28rem; // max-w-md (448px)
   text-align: center;
 }
 
-.top-content {
-  // This block might need some top margin if not relying on justify-between for all spacing
-  // Or the py-8 on title-block handles it.
-}
-
 .title-block {
-  padding-top: 2rem;    // py-8 (top part)
-  padding-bottom: 2rem; // py-8 (bottom part)
+  padding-top: 2rem;    // py-8 top (32px)
+  padding-bottom: 2rem; // py-8 bottom (32px)
 }
 
 .brand-title {
-  // Original: text-[#141414] dark:text-neutral-100 text-2xl font-bold leading-tight tracking-[-0.015em] mb-10
-  font-family: "Space Grotesk", sans-serif; // From theme, but can be explicit
-  font-size: 1.5rem; // text-2xl
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.5rem; // text-2xl (24px)
   font-weight: 700;  // font-bold
-  line-height: 1.2;  // leading-tight (approx)
+  line-height: 1.2;
   letter-spacing: -0.015em;
-  margin-bottom: 2.5rem; // mb-10
-  color: var(--mat-app-text-color, #141414); // Use themed text color
+  margin-bottom: 2.5rem; // mb-10 (40px)
+  color: var(--mat-app-text-color, #141414);
 }
 
 .page-title {
-  // Original: text-[#141414] dark:text-neutral-100 tracking-light text-3xl sm:text-4xl font-bold leading-tight
   font-family: "Space Grotesk", sans-serif;
-  letter-spacing: -0.025em; // tracking-light (approx)
-  font-size: 1.875rem; // text-3xl
-  font-weight: 700; // font-bold
-  line-height: 1.2; // leading-tight
+  letter-spacing: -0.025em;
+  font-size: 1.875rem; // text-3xl (30px)
+  font-weight: 700;
+  line-height: 1.2;
   color: var(--mat-app-text-color, #141414);
 
   @media (min-width: 640px) { // sm breakpoint
-    font-size: 2.25rem; // text-4xl
+    font-size: 2.25rem; // text-4xl (36px)
   }
 }
 
 .bottom-content {
-  padding-bottom: 1rem; // pb-4
+  padding-bottom: 1rem; // pb-4 (16px)
 }
 
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 1rem; // space-y-4
+  gap: 1rem; // space-y-4 (16px)
 }
 
 .action-button {
   width: 100%;
-  // Material buttons have a default height. If you need exactly !h-12 (3rem):
-  height: 3rem !important; // Use with caution, theming is preferred
-  // Ensure text inside is styled correctly by Material's button typography
-  // The .login-button, .google-button, .facebook-button classes from global styles.scss
-  // should handle the specific color and background overrides.
+  height: 3rem !important; // !h-12 (48px)
+  border-radius: 9999px !important; // rounded-full
+  text-transform: none !important; // Prevent uppercase text
+  font-weight: 500; // Medium weight
+  font-size: 1rem; // text-base
+
+  .social-icon {
+    margin-right: 0.5rem; // mr-2 (8px)
+    width: 20px;
+    height: 20px;
+    font-size: 20px; // For font icons or if SVG size needs control via font-size
+    // If the SVG has fill="currentColor", this will make it white for Facebook/Google buttons
+    color: white;
+  }
 }
 
 .footer-text {
-  // Original: text-neutral-500 dark:text-neutral-400 text-sm text-center mt-8 sm:mt-10
-  color: #757575; // text-neutral-500
-  font-size: 0.875rem; // text-sm
+  color: #757575;
+  font-size: 0.875rem;
   text-align: center;
-  margin-top: 2rem; // mt-8
+  margin-top: 2rem;
 
-  @media (min-width: 640px) { // sm breakpoint
-    margin-top: 2.5rem; // mt-10
-  }
-
-  .dark-theme & { // Example for dark mode text if not handled by Material theme variables
-    color: #a0a0a0; // text-neutral-400
+  @media (min-width: 640px) {
+    margin-top: 2.5rem;
   }
 }
 
 .footer-link {
-  // Original: font-medium text-primary-600 hover:underline dark:text-primary-500
-  font-weight: 500; // font-medium
-  color: var(--mdc-theme-primary, black); // Use Material primary color
-  text-decoration: none; // Remove default underline for links
-
+  font-weight: 500;
+  color: var(--mdc-theme-primary, black);
+  text-decoration: none;
   &:hover {
     text-decoration: underline;
-  }
-
-  .dark-theme & {
-    // color: var(--mdc-theme-primary-dark, lightblue); // Example dark theme primary
   }
 }
 
 .bottom-spacer {
-  height: 1.25rem; // h-5
+  height: 1.25rem;
+  @media (min-width: 640px) {
+    height: 2rem;
+  }
 }
+
+
+
+// If you had a "Done" button that was light gray stroked:
+// .custom-done-button.mat-mdc-outlined-button {
+//   --mdc-outlined-button-label-text-color: #{map.get(app_theme_colors.$_palettes.neutral, 10)}; // Dark text
+//   --mdc-outlined-button-outline-color: #{map.get(app_theme_colors.$_palettes.neutral, 80)};   // Medium-light gray border
+//   // background-color: map.get(app_theme_colors.$_palettes.neutral, 95); // If you want a fill
+// }

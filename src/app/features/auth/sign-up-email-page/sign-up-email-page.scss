@@ -1,0 +1,103 @@
+:host(.sign-up-email-page-host) {
+  display: flex; // Allow host to be part of flex layout if app.component is flex
+  flex-direction: column;
+  min-height: 100vh; // Ensure it takes at least full viewport height if header is outside
+}
+
+.sign-up-email-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; // Align content to the top after header
+  flex-grow: 1; // Takes available space below header
+  padding: 1rem; // p-4 base (16px)
+  box-sizing: border-box;
+  background-color: var(--mat-app-background-color, #f9fafb);
+
+  @media (min-width: 640px) { // sm breakpoint
+    padding: 1.5rem; // 24px
+  }
+  @media (min-width: 768px) { // md breakpoint
+    padding: 2rem; // 32px
+  }
+}
+
+.sign-up-content-wrapper {
+  width: 100%;
+  max-width: 28rem; // max-w-md (448px)
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.5rem; // Space below header
+}
+
+.page-subtitle {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.5rem; // text-2xl (24px)
+  font-weight: 700;  // font-bold
+  text-align: center;
+  color: var(--mat-app-text-color, #141414);
+  margin-bottom: 2rem; // mb-8 (32px)
+}
+
+.sign-up-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; // space-y-4 (16px) -> reduced from 1.5rem for slightly tighter form
+}
+
+.form-field.full-width {
+  width: 100%;
+}
+
+// .sign-up-button class for the primary "Create Account" button
+// Its black background and white text should come from color="primary"
+// and your global theme overrides for .login-button.mat-mdc-raised-button.mat-primary
+// in styles.scss (as per Part 7 of angular_material_app_guide_v1).
+// If you need a distinct class:
+.sign-up-button {
+  // height: 3rem !important; // From original HTML !h-12. Material buttons have standard heights.
+  // border-radius: 0.75rem !important; // From original HTML rounded-xl.
+}
+
+.action-button { // Common class for main action button for consistent sizing/shape
+  width: 100%;
+  height: 3rem !important;
+  border-radius: 0.75rem !important; // Match original login.html button rounding
+  text-transform: none !important;
+  font-weight: 700; // Bold like original primary buttons
+  font-size: 1rem; // text-base
+}
+
+
+.footer-text {
+  color: #757575; // text-neutral-500
+  font-size: 0.875rem; // text-sm (14px)
+  text-align: center;
+  margin-top: 2rem; // mt-8 (32px)
+  margin-bottom: 1rem; // Add some bottom margin
+
+  @media (min-width: 640px) { // sm breakpoint
+    margin-top: 2.5rem; // mt-10 (40px)
+  }
+}
+
+.footer-link {
+  font-weight: 500; // font-medium
+  color: var(--mdc-theme-primary, black); // Use Material primary color
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.form-error-message {
+  color: var(--mdc-theme-error, #B00020); // Material error color
+  font-size: 0.875rem; // text-sm
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fdecea; // bg-red-100 like (light red)
+  border-radius: 0.375rem; // rounded-md
+}

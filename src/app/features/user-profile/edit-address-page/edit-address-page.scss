@@ -1,0 +1,25 @@
+:host(.edit-address-page-host) {
+  display: flex; // Allows the host to participate in flex layout if its parent is flex
+  flex-direction: column; // Stack header and content vertically
+  min-height: 100vh; // Ensure it takes at least full viewport height
+  background-color: var(--mat-app-background-color, #f9fafb); // Use theme background
+}
+
+.edit-address-page-content-wrapper {
+  flex-grow: 1; // Takes up available space between header and potential footer
+  display: flex;
+  align-items: center; // Vertically center the status message
+  justify-content: center; // Horizontally center the status message
+  padding: 1rem; // p-4 equivalent
+  box-sizing: border-box;
+}
+
+.status-message {
+  text-align: center; // text-center
+  color: var(--mat-app-secondary-text-color, #757575); // text-neutral-500 equivalent from Material theme
+  // For dark theme, text color should adapt based on Material theme variables.
+  // If using specific dark theme classes on body:
+  // .dark-theme & {
+  //   color: #a0a0a0; // Example for text-neutral-400 dark
+  // }
+}

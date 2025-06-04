@@ -1,27 +1,8 @@
-.page-header-toolbar {
-  // The .mat-toolbar class itself has padding.
-  // If you need to override Material's default toolbar padding or height:
-  &.mat-toolbar-single-row {
-    height: 4rem; // Equivalent to h-16
-    // padding: 0 1rem; // Equivalent to px-4, if Material's default isn't desired
-  }
-}
+@use '@angular/material' as mat;
 
-.page-header-title {
-  // flex-grow: 1; // This is handled by flex-auto in the template
-  // text-align: center; // This is handled by text-center in the template
-  // Any specific typography overrides for the title not covered by the theme can go here.
-  // For example, if you want to ensure it doesn't shrink:
-  // flex-shrink: 0;
-}
 
-.page-header-back-button {
-  // Specific styling for the back button if needed
-  // margin-right: 16px; // Example if not using flex placeholders for centering
-}
-
-.page-header-actions {
-  // Container for any action buttons or elements projected into the slot
-  // display: flex;
-  // align-items: center;
+mat-toolbar {
+  @include mat.toolbar-overrides((
+    container-background-color: var(--mat-sys-secondary-container),
+  ));
 }

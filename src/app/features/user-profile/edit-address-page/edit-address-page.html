@@ -1,10 +1,11 @@
 <app-page-header [title]="pageHeaderTitle()" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
-<div class="p-4 washr-page-container flex-grow flex items-center justify-center">
-  <p class="text-center text-neutral-500 dark:text-neutral-400">
+
+<div class="edit-address-page-content-wrapper">
+  <p class="status-message">
     @if (editingAddressId()) {
-      Cargando direcciones actuales...
+      Loading address details...
     } @else {
-      Preparandose para añadir una nueva dirección...
+      Preparing to add a new address...
     }
   </p>
   </div>

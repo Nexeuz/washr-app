@@ -1,0 +1,123 @@
+:host(.personal-info-page-host) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.personal-info-page-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: var(--mat-app-background-color, #f9fafb);
+  color: var(--mat-app-text-color, #141414);
+  overflow-y: hidden;
+}
+
+.form-content-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.75rem 1rem 1rem 1rem;
+  flex-grow: 1;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.personal-info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-field-group {
+  // No specific styles needed if gap on form is sufficient
+}
+
+.form-field-label {
+  display: block;
+  color: var(--mat-app-text-color, #141414);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  padding-bottom: 0.5rem;
+}
+
+.form-field.full-width {
+  width: 100%;
+}
+
+.section-title {
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--mat-app-text-color, #141414);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.address-list {
+  // No specific styles needed for mat-list itself here
+}
+
+.empty-list-message {
+  padding: 0.5rem 0;
+  color: #757575; // text-neutral-500
+  text-align: center;
+}
+
+.footer-actions-container {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--mat-app-background-color, #f9fafb);
+  border-top: 1px solid var(--mat-divider-color, #e0e0e0);
+  padding: 0.75rem 0;
+  z-index: 10;
+}
+
+.footer-actions-wrapper {
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  @media (min-width: 640px) { // sm breakpoint
+    flex-direction: row;
+  }
+}
+
+.action-button {
+  width: 100%;
+  text-transform: none !important;
+  font-weight: 700;
+  border-radius: 0.75rem !important;
+}
+
+.add-address-button {
+  height: 2.5rem !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  font-size: 0.875rem !important;
+
+  @media (min-width: 640px) {
+    width: auto;
+  }
+}
+
+.save-button {
+  height: 3rem !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  font-size: 1rem !important;
+
+  @media (min-width: 640px) {
+    flex-grow: 1;
+  }
+}

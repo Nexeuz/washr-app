@@ -1,5 +1,5 @@
-<mat-toolbar class="page-header-toolbar dark:!bg-neutral-800"> @if (showBackButton) {
-    <button mat-icon-button (click)="onBackClicked()" [attr.aria-label]="backButtonAriaLabel" class="page-header-back-button">
+<mat-toolbar> @if (showBackButton) {
+    <button matIconButton  (click)="onBackClicked()" [attr.aria-label]="backButtonAriaLabel" class="page-header-back-button">
       <mat-icon>{{ backButtonIconName }}</mat-icon>
     </button>
   } @else {

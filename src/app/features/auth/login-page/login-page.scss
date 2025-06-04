@@ -1,0 +1,168 @@
+:host(.login-page-host) {
+  display: block; // Ensures the host element behaves correctly in layout
+}
+
+.login-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; // Vertically center content for shorter viewports
+  min-height: 100vh;
+  padding: 1rem; // p-4 base (16px)
+  box-sizing: border-box;
+  background-color: var(--mat-app-background-color, #f9fafb); // From Material theme or your neutral-50 equivalent
+
+  // Dark mode styles (assuming your theme sets CSS variables for dark mode)
+  // Or use @media (prefers-color-scheme: dark)
+  &.dark-theme { // Example if you manually toggle a theme class on body/html
+    // background-color: var(--mat-app-background-color-dark, #1e1e1e); // Example dark bg
+    // color: var(--mat-app-text-color-dark, #e0e0e0); // Example dark text
+  }
+}
+
+.login-content-wrapper {
+  width: 100%;
+  max-width: 28rem; // max-w-md (448px)
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  // Original: text-3xl sm:text-4xl font-bold text-center text-[#141414] dark:text-neutral-100 mb-8
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.875rem; // text-3xl (30px)
+  font-weight: 700;    // font-bold
+  text-align: center;
+  color: var(--mat-app-text-color, #141414); // Use themed text color
+  margin-bottom: 2rem; // mb-8 (32px)
+
+  @media (min-width: 640px) { // sm breakpoint
+    font-size: 2.25rem; // text-4xl (36px)
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // space-y-6 (24px)
+}
+
+.form-field.full-width {
+  width: 100%;
+}
+
+// The .login-button class for the primary "Log in" button
+// (black background, white text) should be defined in your global styles.scss
+// as per Part 7 of the main guide (angular_material_app_guide_v1),
+// targeting .login-button.mat-mdc-raised-button.mat-primary
+.login-button {
+  // height: 3rem !important; // !h-12 from original HTML. Material buttons have standard heights.
+  // Override if absolutely necessary, but prefer Material's sizing or density settings.
+}
+
+.separator-text {
+  // Original: text-neutral-500 dark:text-neutral-400 text-sm text-center my-6
+  color: #757575; // text-neutral-500
+  font-size: 0.875rem; // text-sm (14px)
+  text-align: center;
+  margin-top: 1.5rem;    // my-6 (24px top)
+  margin-bottom: 1.5rem; // my-6 (24px bottom)
+
+  .dark-theme & {
+    color: #a0a0a0; // text-neutral-400 for dark mode
+  }
+}
+
+.social-buttons-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; // space-y-3 (12px)
+}
+
+.action-button { // Common class for all buttons on this page for consistent sizing/shape
+  width: 100%;
+  height: 3rem !important; // !h-12 from original HTML
+  border-radius: 0.75rem !important; // rounded-xl from original HTML
+  text-transform: none !important; // Prevent uppercase text
+  font-weight: 500; // Medium weight for button text
+  font-size: 1rem; // text-base (16px)
+
+  .social-icon {
+    margin-right: 0.5rem; // Space between icon and text
+    width: 20px;
+    height: 20px;
+    font-size: 20px; // For font icons or if SVG size needs control via font-size
+  }
+}
+
+// Google Sign-In Button styling (blue background, white text)
+// This class is applied to <button mat-flat-button class="... google-signin-button">
+.google-signin-button.mat-mdc-text-button { // mat-flat-button uses .mdc-text-button as its base
+  --mdc-text-button-label-text-color: white;
+  --mdc-text-button-container-color: #4285F4; // Google Blue
+  --mdc-text-button-icon-color: white; // For mat-icon if it uses currentColor
+  // Hover/focus states
+  --mdc-text-button-hover-state-layer-color: white;
+  --mdc-text-button-hover-state-layer-opacity: 0.08;
+  --mdc-text-button-focus-state-layer-color: white;
+  --mdc-text-button-pressed-state-layer-color: white;
+
+  .social-icon ::ng-deep svg path { // If SVG has its own fills, try to override
+    // fill: white !important; // This might be needed if the SVG is multi-color and needs to be white
+  }
+}
+
+// Facebook Sign-In Button styling (blue background, white text)
+// This class is applied to <button mat-flat-button class="... facebook-signin-button">
+.facebook-signin-button.mat-mdc-text-button {
+  --mdc-text-button-label-text-color: white;
+  --mdc-text-button-container-color: #1877F2; // Facebook Blue
+  --mdc-text-button-icon-color: white;
+  // Hover/focus states
+  --mdc-text-button-hover-state-layer-color: white;
+  --mdc-text-button-hover-state-layer-opacity: 0.08;
+
+  .social-icon ::ng-deep svg path {
+    fill: white !important; // Ensure Facebook icon is white
+  }
+}
+
+
+.footer-text {
+  // Original: text-neutral-500 dark:text-neutral-400 text-sm text-center mt-8
+  color: #757575; // text-neutral-500
+  font-size: 0.875rem; // text-sm (14px)
+  text-align: center;
+  margin-top: 2rem; // mt-8 (32px)
+
+  .dark-theme & {
+    color: #a0a0a0; // text-neutral-400 for dark mode
+  }
+}
+
+.footer-link {
+  // Original: font-medium text-primary-600 hover:underline dark:text-primary-500
+  font-weight: 500; // font-medium
+  color: var(--mdc-theme-primary, black); // Use Material primary color (should be black from your theme)
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  .dark-theme & {
+    // color: var(--mdc-theme-primary-dark, lightblue); // Example dark theme primary
+  }
+}
+
+.form-error-message {
+  // Original: text-red-500 text-sm text-center my-2 p-2 bg-red-100 rounded-md
+  color: var(--mdc-theme-error, #B00020); // Material error color
+  font-size: 0.875rem; // text-sm
+  text-align: center;
+  margin-top: 0.5rem;    // my-2 top
+  margin-bottom: 0.5rem; // my-2 bottom
+  padding: 0.5rem;       // p-2
+  background-color: #fdecea; // bg-red-100 like (light red)
+  border-radius: 0.375rem; // rounded-md
+}

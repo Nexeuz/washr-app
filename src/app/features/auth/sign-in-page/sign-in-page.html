@@ -12,14 +12,18 @@
 
   <div class="content-wrapper bottom-content">
     <div class="button-group">
-      <button mat-stroked-button class="action-button social-button google-button" (click)="onContinueWith('Google')">
+      <button matButton="filled" class="action-button social-button google-signin-button" (click)="onContinueWith('Google')">
+        <mat-icon svgIcon="google-brand-logo" class="social-icon"></mat-icon>
+
         Continue with Google
       </button>
-      <button mat-flat-button class="action-button social-button facebook-button" (click)="onContinueWith('Facebook')">
+      <button  matButton="filled"  class="action-button social-button facebook-signin-button" (click)="onContinueWith('Facebook')">
+        <mat-icon svgIcon="facebook-brand-logo" class="social-icon"></mat-icon>
         Continue with Facebook
       </button>
-      <button mat-raised-button color="primary" class="action-button login-button" (click)="onContinueWith('Email')">
+      <button matButton="outlined"  class="action-button login-button" (click)="onContinueWith('Email')">
         Continue with Email
+        
       </button>
     </div>
     <p class="footer-text">

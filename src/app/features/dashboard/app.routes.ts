@@ -25,11 +25,13 @@ export const routes: Routes = [
           ),
         title: 'Sign In - Washr App'
       },
+
       {
-        path: 'sign-up-email',
+        path: 'sign-up-email', // Page for email/password creation
         loadComponent: () => import('../auth/sign-up-email-page/sign-up-email-page').then(m => m.SignUpEmailPageComponent),
         title: 'Sign Up - Washr App'
       },
+
 
       // You might add a sign-up route here later
       // {
@@ -43,7 +45,7 @@ export const routes: Routes = [
   // User Profile Feature Routes
   {
     path: 'profile', // Optional parent path for profile-related routes
-    canActivate: [authGuard], // Protect this entire feature
+   /// canActivate: [authGuard], // Protect this entire feature
     // canActivate: [AuthGuard], // Example: Protect these routes if you have an AuthGuard
     children: [
       {
@@ -53,6 +55,11 @@ export const routes: Routes = [
             '../user-profile/personal-info-page/personal-info-page'
           ).then((m) => m.PersonalInfoPageComponent),
         title: 'Personal Information - Washr App'
+      },
+            {
+        path: 'edit-address',
+        loadComponent: () => import('../user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
+        title: 'New Address - Washr App'
       },
       {
         path: 'edit-address/:id',
@@ -118,12 +125,12 @@ export const routes: Routes = [
   // Default and Wildcard Routes
   {
     path: '',
-    redirectTo: '/auth/login', // Default route redirects to login
+    redirectTo: '/auth/sign-in', // Default route redirects to login
     pathMatch: 'full',
   },
   {
     path: '**', // Wildcard route for a 404 page
-    redirectTo: '/auth/login', // Or load a dedicated NotFoundComponent
+    redirectTo: '/auth/sign-in', // Or load a dedicated NotFoundComponent
     // loadComponent: () => import('./core/components/not-found-page/not-found-page.component').then(m => m.NotFoundPageComponent),
     // title: 'Page Not Found - Washr App'
   },

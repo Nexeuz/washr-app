@@ -1,59 +1,56 @@
-<app-page-header title="Personal Data" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
+<app-page-header title="Personal Data" [showBackButton]="false" ></app-page-header>
 
-<div class="flex flex-col justify-between flex-grow washr-page-container"> <div class="flex-grow p-4"> <div class="max-w-md mx-auto"> <form [formGroup]="personalInfoForm" (ngSubmit)="onSave()" novalidate class="space-y-1">
-        <mat-form-field appearance="outline" class="w-full mt-3">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" placeholder="Enter your name" required>
+<div class="personal-info-page-container"> <!-- main page container -->
+  <div class="form-content-wrapper"> <!-- Centered content with max width -->
+    <form [formGroup]="personalInfoForm" (ngSubmit)="onSave()" novalidate class="personal-info-form">
+      <!-- Name Field -->
+      <div class="form-field-group">
+        <label class="form-field-label" for="name-input-pi">Name</label>
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Enter your name</mat-label>
+          <input matInput id="name-input-pi" formControlName="name" required>
           @if (personalInfoForm.get('name')?.hasError('required') && personalInfoForm.get('name')?.touched) {
             <mat-error>Name is required.</mat-error>
           }
         </mat-form-field>
+      </div>
 
-        <mat-form-field appearance="outline" class="w-full mt-3">
-          <mat-label>Date of Birth</mat-label>
-          <input matInput formControlName="dateOfBirth" type="date" placeholder="Select your date of birth" required>
+      <!-- Date of Birth Field -->
+      <div class="form-field-group">
+        <label class="form-field-label" for="dob-input-pi">Date of Birth</label>
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Select your date of birth</mat-label>
+          <input matInput id="dob-input-pi" formControlName="dateOfBirth" type="date" required>
           <mat-icon matSuffix>calendar_today</mat-icon>
           @if (personalInfoForm.get('dateOfBirth')?.hasError('required') && personalInfoForm.get('dateOfBirth')?.touched) {
             <mat-error>Date of Birth is required.</mat-error>
           }
         </mat-form-field>
+      </div>
 
-        <mat-form-field appearance="outline" class="w-full mt-3">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="Enter your email" required>
-           @if (personalInfoForm.get('email')?.hasError('required') && personalInfoForm.get('email')?.touched) {
+      <!-- Email Field -->
+      <div class="form-field-group">
+        <label class="form-field-label" for="email-input-pi">Email</label>
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Enter your email</mat-label>
+          <input matInput id="email-input-pi" formControlName="email" type="email" required>
+           @if (personalInfoForm.get('email')?.hasError('required') && personalInfoForm.get('email')?.touched && personalInfoForm.get('email')?.enabled) {
             <mat-error>Email is required.</mat-error>
           }
-          @if (personalInfoForm.get('email')?.hasError('email') && personalInfoForm.get('email')?.touched) {
+          @if (personalInfoForm.get('email')?.hasError('email') && personalInfoForm.get('email')?.touched && personalInfoForm.get('email')?.enabled) {
             <mat-error>Please enter a valid email.</mat-error>
           }
         </mat-form-field>
+      </div>
 
-        <mat-form-field appearance="outline" class="w-full mt-3">
-          <mat-label>Password</mat-label>
-          <input matInput formControlName="password" type="password" placeholder="Enter your password" required>
-           @if (personalInfoForm.get('password')?.hasError('required') && personalInfoForm.get('password')?.touched) {
-            <mat-error>Password is required.</mat-error>
-          }
-           @if (personalInfoForm.get('password')?.hasError('minlength') && personalInfoForm.get('password')?.touched) {
-            <mat-error>Password must be at least 8 characters.</mat-error>
-          }
-        </mat-form-field>
+      <!-- Password and Repeat Password fields are REMOVED -->
 
-        <mat-form-field appearance="outline" class="w-full mt-3">
-          <mat-label>Repeat Password</mat-label>
-          <input matInput formControlName="repeatPassword" type="password" placeholder="Repeat your password" required>
-           @if (personalInfoForm.get('repeatPassword')?.hasError('required') && personalInfoForm.get('repeatPassword')?.touched) {
-            <mat-error>Please repeat your password.</mat-error>
-          }
-           @if (personalInfoForm.hasError('passwordsNotMatching') && personalInfoForm.get('repeatPassword')?.touched) {
-            <mat-error>Passwords do not match.</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-full mt-3">
-          <mat-label>Gender</mat-label>
-          <mat-select formControlName="gender" placeholder="Select your gender" required>
+      <!-- Gender Field -->
+      <div class="form-field-group">
+        <label class="form-field-label" for="gender-select-pi">Gender</label>
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Select your gender</mat-label>
+          <mat-select id="gender-select-pi" formControlName="gender" required>
             @for (option of genderOptions; track option.value) {
               <mat-option [value]="option.value">{{option.viewValue}}</mat-option>
             }
@@ -62,36 +59,37 @@
             <mat-error>Gender is required.</mat-error>
           }
         </mat-form-field>
-      </form>
+      </div>
+    </form>
 
-      <h3 class="text-[#141414] dark:text-neutral-100 text-xl font-bold leading-tight mt-6 mb-2">Addresses</h3>
-      <mat-list role="list">
-        @for (address of addresses(); track address.id; let isLast = $last) {
-          <app-list-item
-            [iconName]="address.iconName"
-            [title]="address.title"
-            [subtitle]="address.subtitle"
-            [isClickable]="true"
-            [showTrailingIcon]="true"
-            (itemClick)="onEditAddress(address.id)"
-            [showDivider]="!isLast"> </app-list-item>
-          } @empty {
-          <p class="py-2 text-neutral-500 dark:text-neutral-400 text-center">No addresses found. You can add one below.</p>
-        }
-      </mat-list>
-    </div>
+    <!-- Addresses Section -->
+    <h3 class="section-title">Añade direcciones donde quieres que recojamos tus vehículos</h3>
+    <mat-list role="list" class="address-list">
+      @for (address of addresses(); track address.id; let isLast = $last) {
+        <app-list-item
+          [iconName]="address.iconName"
+          [title]="address.title"
+          [subtitle]="address.subtitle"
+          [isClickable]="true"
+          [showTrailingIcon]="true"
+          (itemClick)="onEditAddress(address.id)"
+          [showDivider]="!isLast">
+        </app-list-item>
+      } @empty {
+        <p class="empty-list-message">No addresses found. You can add one below.</p>
+      }
+    </mat-list>
   </div>
 
-  <div class="sticky bottom-0 bg-neutral-50 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 py-3 mt-auto">
-    <div class="max-w-md mx-auto px-4">
-      <div class="flex flex-col sm:flex-row gap-3 py-2">
-        <button mat-stroked-button color="accent" (click)="onAddAddress()" class="w-full sm:w-auto !h-10 action-button">
-          Add Address
-        </button>
-        <button mat-raised-button color="primary" (click)="onSave()" class="w-full sm:flex-1 !h-12 login-button">
-          Save
-        </button>
-      </div>
+  <!-- Sticky Footer Area for Actions -->
+  <div class="footer-actions-container">
+    <div class="footer-actions-wrapper">
+      <button matButton="tonal"   (click)="onAddAddress()" class="action-button add-address-button">
+        Add Address
+      </button>
+      <button matButton="filled"  (click)="onSave()" class="action-button save-button">
+        Save
+      </button>
     </div>
   </div>
 </div>

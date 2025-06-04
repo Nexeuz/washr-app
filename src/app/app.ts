@@ -20,13 +20,13 @@ export class App {
   constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
   iconRegistry.addSvgIcon(
       'google-brand-logo', // Name you'll use in <mat-icon svgIcon="...">
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/google-logo.svg')
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/google.svg')
     );
 
     // Register the Facebook logo SVG from assets
     iconRegistry.addSvgIcon(
       'facebook-brand-logo', // Name you'll use
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook-logo.svg')
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg')
     );
   }
   // Use the signal from AuthService or subscribe to authState$

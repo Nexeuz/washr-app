@@ -37,8 +37,7 @@ export class SignInPageComponent {
           this.router.navigate(['/profile/personal-info']);
           break;
         case 'Email':
-          await this.authService.loginWithFacebook();
-          this.router.navigate(['/profile/personal-info']);
+          this.router.navigate(['/auth/sign-up-email']);
           break;
       }
     } catch (error: any) {
