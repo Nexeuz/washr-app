@@ -1,7 +1,10 @@
-<app-page-header title="Personal Data" [showBackButton]="false" ></app-page-header>
+<app-page-header title="Personal Data" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
 
-<div class="personal-info-page-container"> <!-- main page container -->
-  <div class="form-content-wrapper"> <!-- Centered content with max width -->
+<div class="personal-info-page-container">
+  <div class="form-content-wrapper">
+    @if (isProfileCompletionMode()) {
+      <p class="completion-notice">Please complete your profile information.</p>
+    }
     <form [formGroup]="personalInfoForm" (ngSubmit)="onSave()" novalidate class="personal-info-form">
       <!-- Name Field -->
       <div class="form-field-group">
@@ -15,24 +18,25 @@
         </mat-form-field>
       </div>
 
-      <!-- Date of Birth Field -->
+      <!-- Date of Birth Field with MatDatepicker -->
       <div class="form-field-group">
         <label class="form-field-label" for="dob-input-pi">Date of Birth</label>
         <mat-form-field appearance="outline" class="form-field full-width">
           <mat-label>Select your date of birth</mat-label>
-          <input matInput id="dob-input-pi" formControlName="dateOfBirth" type="date" required>
-          <mat-icon matSuffix>calendar_today</mat-icon>
+          <input matInput id="dob-input-pi" [matDatepicker]="dobPicker" formControlName="dateOfBirth" placeholder="MM/DD/YYYY" required readonly>
+          <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+          <mat-datepicker #dobPicker></mat-datepicker>
           @if (personalInfoForm.get('dateOfBirth')?.hasError('required') && personalInfoForm.get('dateOfBirth')?.touched) {
             <mat-error>Date of Birth is required.</mat-error>
           }
         </mat-form-field>
       </div>
 
-      <!-- Email Field -->
+      <!-- Email Field (Usually disabled) -->
       <div class="form-field-group">
         <label class="form-field-label" for="email-input-pi">Email</label>
         <mat-form-field appearance="outline" class="form-field full-width">
-          <mat-label>Enter your email</mat-label>
+          <mat-label>Email address</mat-label>
           <input matInput id="email-input-pi" formControlName="email" type="email" required>
            @if (personalInfoForm.get('email')?.hasError('required') && personalInfoForm.get('email')?.touched && personalInfoForm.get('email')?.enabled) {
             <mat-error>Email is required.</mat-error>
@@ -42,8 +46,6 @@
           }
         </mat-form-field>
       </div>
-
-      <!-- Password and Repeat Password fields are REMOVED -->
 
       <!-- Gender Field -->
       <div class="form-field-group">
@@ -63,13 +65,13 @@
     </form>
 
     <!-- Addresses Section -->
-    <h3 class="section-title">Añade direcciones donde quieres que recojamos tus vehículos</h3>
+    <h3 class="section-title">Addresses</h3>
     <mat-list role="list" class="address-list">
       @for (address of addresses(); track address.id; let isLast = $last) {
         <app-list-item
-          [iconName]="address.iconName"
-          [title]="address.title"
-          [subtitle]="address.subtitle"
+          [iconName]="address.iconKey"
+          [title]="address.fullAddress"
+          [subtitle]="address.label"
           [isClickable]="true"
           [showTrailingIcon]="true"
           (itemClick)="onEditAddress(address.id)"
@@ -84,11 +86,11 @@
   <!-- Sticky Footer Area for Actions -->
   <div class="footer-actions-container">
     <div class="footer-actions-wrapper">
-      <button matButton="tonal"   (click)="onAddAddress()" class="action-button add-address-button">
+      <button matButton="tonal" (click)="onAddAddress()" class="action-button add-address-button">
         Add Address
       </button>
-      <button matButton="filled"  (click)="onSave()" class="action-button save-button">
-        Save
+      <button matButton="filled" (click)="onSave()" class="action-button save-button">
+        {{ isProfileCompletionMode() ? 'Complete Profile' : 'Save Changes' }}
       </button>
     </div>
   </div>

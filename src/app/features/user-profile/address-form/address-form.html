@@ -1,4 +1,4 @@
-<div class="address-form-sheet-content"> <!-- Overall padding and container for sheet content -->
+<div class="address-form-sheet-content">
   <h2 class="sheet-title">{{ sheetTitle }}</h2>
 
   <form [formGroup]="addressForm" (ngSubmit)="onSave()" class="address-form">
@@ -42,14 +42,14 @@
         }
       </mat-radio-group>
       @if (addressForm.get('addressIcon')?.hasError('required') && addressForm.get('addressIcon')?.touched) {
-        <div class="mat-error-like-text">Icon selection is required.</div> <!-- Custom error display for radio group -->
+        <div class="mat-error-like-text">Icon selection is required.</div>
       }
     </div>
 
     <!-- Action Buttons -->
     <div class="form-actions">
-      <button mat-stroked-button type="button" (click)="onCancel()" class="action-button cancel-button">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" class="action-button save-button">
+      <button matButton="tonal" type="button" (click)="onCancel()" class="action-button cancel-button">Cancel</button>
+      <button matButton="filled"  type="submit" class="action-button save-button">
         {{ isEditMode ? 'Save Changes' : 'Save Address' }}
       </button>
     </div>

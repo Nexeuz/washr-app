@@ -9,6 +9,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 // Firebase
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 // import { getFirestore, provideFirestore } from '@angular/fire/firestore'; // If you use Firestore
 // import { getStorage, provideStorage } from '@angular/fire/storage'; // If you use Storage
 
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     // Firebase providers directly in the array:
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
     // provideFirestore(() => getFirestore()), // Uncomment if you use Firestore
     // provideStorage(() => getStorage())      // Uncomment if you use Firebase Storage
