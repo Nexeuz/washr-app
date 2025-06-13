@@ -1,13 +1,13 @@
 // Path: src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guards/auth-guard';
-import { publicAuthGuard } from '../../core/guards/public-auth-guard';
+import { profileCompleteDasboard, profileCompleteGuardAuth, profileCompleteGuardProfile } from '../../core/guards/profile-complete-guard';
 
 export const routes: Routes = [
   // Authentication Feature Routes
   {
     path: 'auth', // Optional parent path for auth-related routes
-    canActivate: [publicAuthGuard], // Apply publicAuthGuard to the parent 'auth' route
+    canActivate: [profileCompleteGuardAuth], // Apply publicAuthGuard to the parent 'auth' route
     children: [
       {
         path: 'login', // Full path: /auth/login
@@ -46,7 +46,7 @@ export const routes: Routes = [
   {
     path: 'profile', // Optional parent path for profile-related routes
    /// canActivate: [authGuard], // Protect this entire feature
-    // canActivate: [AuthGuard], // Example: Protect these routes if you have an AuthGuard
+    canActivate: [profileCompleteGuardProfile], // Example: Protect these routes if you have an AuthGuard
     children: [
       {
         path: 'personal-info', // Full path: /profile/personal-info
@@ -67,6 +67,14 @@ export const routes: Routes = [
         title: 'Edit Address - Washr App'
       },
     ],
+  },
+
+    {
+    path: 'dasboard',
+    canActivate: [profileCompleteDasboard],
+    loadComponent: () => import('../dashboard/dashboard-page/dashboard-page').then(m => m.DashboardPageComponent),
+    children: [
+    ]
   },
 
    // Service Example Routes (New - based on dashboard card actions)

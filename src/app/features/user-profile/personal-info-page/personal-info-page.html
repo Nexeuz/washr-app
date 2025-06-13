@@ -62,10 +62,23 @@
           }
         </mat-form-field>
       </div>
+
+            <!-- Phone Field (Usually disabled) -->
+      <div class="form-field-group">
+        <label class="form-field-label" for="email-input-pi">Phone</label>
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Teléfono</mat-label>
+          <input matInput id="email-input-pi" formControlName="phone" type="number" required>
+           @if (personalInfoForm.get('phone')?.hasError('required') && personalInfoForm.get('phone')?.touched && personalInfoForm.get('phone')?.enabled) {
+            <mat-error>El celular es required.</mat-error>
+          }
+
+        </mat-form-field>
+      </div>
     </form>
 
     <!-- Addresses Section -->
-    <h3 class="section-title">Addresses</h3>
+    <h3 class="section-title">Direcciones donde recogeremos tus vehículos</h3>
     <mat-list role="list" class="address-list">
       @for (address of addresses(); track address.id; let isLast = $last) {
         <app-list-item
@@ -74,6 +87,7 @@
           [subtitle]="address.label"
           [isClickable]="true"
           [showTrailingIcon]="true"
+          (deleteClick)="onDeleteAddress(address.id)"
           (itemClick)="onEditAddress(address.id)"
           [showDivider]="!isLast">
         </app-list-item>

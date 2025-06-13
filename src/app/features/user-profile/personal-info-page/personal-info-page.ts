@@ -11,21 +11,25 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 // Shared Components
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 // Services
 // Firestore
-import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, getDocs, collection, onSnapshot, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, getDocs, collection, onSnapshot, FirestoreDataConverter, QueryDocumentSnapshot, deleteDoc } from 'firebase/firestore';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { User } from '@angular/fire/auth';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { ListItemComponent } from '../../../shared/components/list-item/list-item';
 import { AuthService } from '../../../core/services/auth';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { Subject, takeUntil } from 'rxjs';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 // Typed Form Interface (No password fields)
 interface PersonalInfoForm {
@@ -33,6 +37,7 @@ interface PersonalInfoForm {
   dateOfBirth: FormControl<Date | null>;
   email: FormControl<string | null>;
   gender: FormControl<'male' | 'female' | null>;
+  phone: FormControl<string | null>;
 }
 
 // Interface for displaying addresses in the list
@@ -77,7 +82,6 @@ const addressConverter: FirestoreDataConverter<AddressDisplayItem> = {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -91,47 +95,51 @@ const addressConverter: FirestoreDataConverter<AddressDisplayItem> = {
   ],
   templateUrl: './personal-info-page.html',
   styleUrls: ['./personal-info-page.scss'],
-    providers: [provideNativeDateAdapter()],
+  providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalInfoPageComponent implements OnInit {
+
   @HostBinding('class.personal-info-page-host') hostClass = true;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
   private firestore = inject(Firestore);
+  private _snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+
+
+
+  // 1. Create a Subject to signal component destruction
+  private destroy$ = new Subject<void>();
 
   personalInfoForm!: FormGroup<PersonalInfoForm>;
   // This signal indicates if the page is for initial profile completion vs. editing
   isProfileCompletionMode = signal(false);
 
 
-  addresses = signal<AddressDisplayItem[]>([
-    // Example data, load from Firestore subcollection in real app
-    // { id: '1', iconName: 'home', title: '789 Maple Drive, Anytown, USA', subtitle: 'Primary Address' },
-    // { id: '2', iconName: 'work', title: '101 Pine Lane, Business City, USA', subtitle: 'Secondary Address' },
-  ]);
+  addresses = signal<AddressDisplayItem[]>([]);
 
   genderOptions: GenderOption[] = [
     { value: 'male', viewValue: 'Male' },
     { value: 'female', viewValue: 'Female' },
   ];
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.initializeForm();
 
     this.authService.authState$.subscribe(user => {
       if (user) {
-         const currentUser = this.authService.getCurrentUser();
+        const currentUser = this.authService.getCurrentUser();
         if (!currentUser) {
           this.router.navigate(['/auth/login']); // Should be caught by AuthGuard
           return;
         }
-    // Ensure user document exists in Firestore and load data
-    this.checkAndLoadUserProfile(currentUser);
+        // Ensure user document exists in Firestore and load data
+        this.checkAndLoadUserProfile(currentUser);
       }
 
     })
@@ -139,29 +147,40 @@ export class PersonalInfoPageComponent implements OnInit {
 
   }
 
+  ngOnDestroy(): void {
+
+
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.onSaveFirestore();
+
+  }
+
+
   initializeForm(): void {
     this.personalInfoForm = this.fb.group({
       name: new FormControl('', Validators.required),
       dateOfBirth: new FormControl<Date | null>(null, Validators.required),
       email: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.email]), // Email usually pre-filled and disabled
-      gender: new FormControl<'male' | 'female' | null>(null, Validators.required)
+      phone: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      gender: new FormControl<'male' | 'female' | null>(null, Validators.required),
     });
   }
 
-async checkAndLoadUserProfile(currentUser: User): Promise<void> {
+  async checkAndLoadUserProfile(currentUser: User): Promise<void> {
     const userDocRef = doc(this.firestore, `users/${currentUser.uid}`);
     try {
-    let docSnap;
+      let docSnap;
 
-    // Try loading from cache first (optional)
-    try {
-      docSnap = await getDocFromCache(userDocRef);
-      console.log('📦 Loaded profile from cache');
-    } catch (cacheError) {
-      console.warn('⚠️ No cache found. Loading from server...');
-      docSnap = await getDoc(userDocRef);
-    }      
-    let userProfileData: DocumentData | null = null;
+      // Try loading from cache first (optional)
+      try {
+        docSnap = await getDocFromCache(userDocRef);
+        console.log('📦 Loaded profile from cache');
+      } catch (cacheError) {
+        console.warn('⚠️ No cache found. Loading from server...');
+        docSnap = await getDoc(userDocRef);
+      }
+      let userProfileData: DocumentData | null = null;
 
       if (!docSnap.exists()) {
         console.log(`PersonalInfoPage: No profile found for user ${currentUser.uid}. Creating initial Firestore document.`);
@@ -197,6 +216,7 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
         this.personalInfoForm.patchValue({
           name: userProfileData['displayName'] || currentUser.displayName || '',
           email: userProfileData['email'] || currentUser.email || '',
+          phone: userProfileData['phone'] || '',
           // Handle dateOfBirth: Firestore might store it as a Timestamp or an ISO string
           dateOfBirth: userProfileData['dateOfBirth']
             ? (userProfileData['dateOfBirth'] instanceof Timestamp
@@ -228,17 +248,19 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
   }
 
   async loadUserAddresses(userId: string): Promise<void> {
-  //   // Conceptual: fetch addresses from users/{userId}/addresses
-   const addressesSnapshot =  collection(this.firestore, `users/${userId}/addresses`).withConverter(addressConverter);
+    //   // Conceptual: fetch addresses from users/{userId}/addresses
+    const addressesSnapshot = collection(this.firestore, `users/${userId}/addresses`).withConverter(addressConverter);
 
- collectionData<AddressDisplayItem>(addressesSnapshot, { idField: 'id' }).subscribe(addresses  => {
-    console.log(addresses)
+    const addresses$ = collectionData<AddressDisplayItem>(addressesSnapshot, { idField: 'id' });
 
-    this.addresses.set(addresses)
 
- });
-
-  // }
+    addresses$.pipe(
+      takeUntil(this.destroy$) // This will automatically unsubscribe when destroy$ emits
+    ).subscribe(addresses => {
+      console.log('Fetched addresses:', addresses);
+      this.addresses.set(addresses);
+    });
+    // }
   }
 
   async onSave(): Promise<void> {
@@ -248,6 +270,19 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
       return;
     }
 
+
+    if (this.addresses.length == 0) {
+      this._snackBar.open('Debes añadir al menos una dirección', 'Ok');
+      return;
+    }
+
+
+    this.onSaveFirestore(true, true);
+
+  }
+
+
+  async onSaveFirestore(onNavigateDasboard = false, isProfileCompletionMode = false): Promise<void> {
     const formData = this.personalInfoForm.getRawValue(); // Use getRawValue for all fields, including disabled email
     const currentUser = this.authService.getCurrentUser();
 
@@ -267,17 +302,19 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
         displayName: formData.name,
         dateOfBirth: dobForFirestore,
         gender: formData.gender,
+        phone: formData.phone,
         // photoURL: currentUser.photoURL || null, // Only update if changed via a separate mechanism
-        // authProviders: currentUser.providerData.map(p => p.providerId), // Usually not updated here
-        isRegistrationComplete: true, // Mark registration as complete
+        isRegistrationComplete: isProfileCompletionMode, // Mark registration as complete
         updatedAt: serverTimestamp(),
       };
 
       const userDocRef = doc(this.firestore, `users/${currentUser.uid}`);
       await setDoc(userDocRef, profileDataToUpdate, { merge: true }); // Use merge:true to update existing or create if somehow still missing
 
-      console.log('Profile data saved to Firestore:', profileDataToUpdate);
-      this.router.navigate(['/dashboard']);
+      if (onNavigateDasboard) {
+        console.log('Profile data saved to Firestore:', profileDataToUpdate);
+        this.router.navigate(['/dashboard']);
+      }
 
     } catch (error: any) {
       console.error('Error saving profile:', error);
@@ -285,10 +322,13 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
     }
   }
 
+
+  // 3. Implement ngOnDestroy to complete the Subject
+
   onAddAddress(): void {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      this.router.navigate(['/profile/add-address', currentUser.uid ]);
+      this.router.navigate(['/profile/add-address', currentUser.uid]);
     } else {
       console.error("Cannot add address: no current user.");
     }
@@ -297,11 +337,41 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
   onEditAddress(addressId: string): void {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      const userId =  currentUser.uid
-      this.router.navigate(['/profile/edit-address',addressId, userId]);
+      const userId = currentUser.uid
+      this.router.navigate(['/profile/edit-address', addressId, userId]);
     } else {
       console.error("Cannot edit address: no current user.");
     }
+  }
+onDeleteAddress(addressId: string): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Delete Address',
+        message: 'Are you sure you want to permanently delete this address?',
+        confirmButtonText: 'Delete'
+      } as ConfirmationDialogData,
+      width: '320px',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: boolean) => {
+      if (!result) return;
+
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        this._snackBar.open('Session expired. Please log in again.', 'Close', { duration: 3000 });
+        return;
+      }
+
+      try {
+        const addressDocRef = doc(this.firestore, `users/${currentUser.uid}/addresses/${addressId}`);
+        await deleteDoc(addressDocRef);
+        this._snackBar.open('Address deleted successfully.', 'Close', { duration: 2000 });
+        // The real-time subscription from `loadUserAddresses` will automatically update the UI.
+      } catch (error) {
+        console.error("Error deleting address:", error);
+        this._snackBar.open('Failed to delete address. Please try again.', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   goBack(): void {
@@ -311,4 +381,6 @@ async checkAndLoadUserProfile(currentUser: User): Promise<void> {
       this.router.navigate(['/dashboard']);
     }
   }
+
+  checkLoginStatus() {}
 }

@@ -63,7 +63,7 @@ export class AddressFormComponent implements OnInit {
     { value: 'home', label: 'Casa', iconName: 'home' },
     { value: 'work', label: 'Trabajo', iconName: 'work' },
     { value: 'school', label: 'Estudio', iconName: 'school' },
-    { value: 'other', label: 'Otro', iconName: 'location_on' },
+    { value: 'location_on', label: 'Otro', iconName: 'location_on' },
   ];
 
   constructor(

@@ -1,21 +1,24 @@
 <mat-list-item
   (click)="onItemClicked()"
   [class.custom-list-item-clickable]="isClickable"
-  class="custom-list-item h-auto py-2"
-  [attr.role]="isClickable ? 'button' : null"
-  [attr.tabindex]="isClickable ? 0 : null"
-  (keydown.enter)="isClickable && onItemClicked()"
-  (keydown.space)="isClickable && onItemClicked()">
+  class="custom-list-item h-auto py-2">
   @if (iconName) {
     <mat-icon matListItemIcon>{{ iconName }}</mat-icon>
   }
-  <div matListItemTitle class="font-medium text-[#141414] dark:text-neutral-100">{{ title }}</div>
+  <div matListItemTitle class="list-item-title">{{ title }}</div>
   @if (subtitle) {
-    <div matListItemLine class="text-sm text-neutral-500 dark:text-neutral-400">{{ subtitle }}</div>
+    <div matListItemLine class="list-item-subtitle">{{ subtitle }}</div>
   }
-  @if (showTrailingIcon) {
-    <mat-icon matListItemMeta>{{ trailingIconName }}</mat-icon>
-  }
+
+  <!-- Meta section for trailing icons -->
+  <div matListItemMeta class="list-item-meta">
+    @if (showDeleteButton) {
+      <button matIconButton  (click)="onDeleteClicked($event)" aria-label="Delete item">
+        <mat-icon>{{ deleteIconName }}</mat-icon>
+      </button>
+    }
+
+  </div>
 </mat-list-item>
 @if (showDivider) {
   <mat-divider></mat-divider>

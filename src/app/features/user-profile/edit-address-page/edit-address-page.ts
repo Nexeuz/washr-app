@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { AddressFormComponent } from '../address-form/address-form';
 
-import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, collection, addDoc, updateDoc } from 'firebase/firestore';
 import { Firestore } from '@angular/fire/firestore';
 
 
@@ -35,10 +35,10 @@ export class EditAddressPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.routeSub = this.route.paramMap.subscribe(params => {
       const userId = params.get('userId');
-       this.addressId = params.get('id')
+      this.addressId = params.get('id')
       this.editingAddressId.set(userId);
       setTimeout(() => {
-      this.openAddressSheet(userId, this.addressId);
+        this.openAddressSheet(userId, this.addressId);
 
       })
 
@@ -46,33 +46,37 @@ export class EditAddressPageComponent implements OnInit, OnDestroy {
   }
 
   openAddressSheet(userId: string | null, addressId?: string | null): void {
-    debugger
     const bottomSheetRef = this.bottomSheet.open(AddressFormComponent, {
       data: { userId, addressId },
       disableClose: true,
       panelClass: 'custom-bottom-sheet-container' // Optional: for global styling of the sheet container
     });
 
-    bottomSheetRef.afterDismissed().subscribe( async result => {
+    bottomSheetRef.afterDismissed().subscribe(async result => {
       console.log('Address form sheet dismissed. Result:', result);
-        try {
+      try {
 
+        if (result) {
           if (this.addressId) {
-            
+            const addressDocRef = doc(this.firestore, `users/${userId}/addresses/${this.addressId}`);
+            await updateDoc(addressDocRef, result);
+            console.log('Document updated with ID:', this.addressId);
           } else {
-             const usersColRef = collection(this.firestore, `users/${userId}/addresses`); // 'users' collection
+            const usersColRef = collection(this.firestore, `users/${userId}/addresses`); // 'users' collection
             const newDocRef = await addDoc(usersColRef, {
-            ...result,
+              ...result,
               createdAt: serverTimestamp(),
-              });
-                    console.log('Document added with ID:', newDocRef.id);
+            });
+            console.log('Document added with ID:', newDocRef.id);
 
           }
-
-
-        } catch (error) {
-          console.error('Error adding document:', error);
         }
+
+
+
+      } catch (error) {
+        console.error('Error adding document:', error);
+      }
       this.router.navigate(['/profile/personal-info']);
     });
   }

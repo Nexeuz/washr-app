@@ -1,6 +1,28 @@
 .custom-list-item-clickable {
   cursor: pointer;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04); // Standard Material hover for list items
+    background-color: rgba(0, 0, 0, 0.04);
   }
+}
+
+.list-item-title {
+  font-family: "Space Grotesk", sans-serif; // Or inherit from theme
+  font-weight: 500;
+  color: var(--mat-app-text-color, #141414);
+}
+
+.list-item-subtitle {
+  font-size: 0.875rem;
+  color: var(--mat-app-secondary-text-color, #757575);
+}
+
+.list-item-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 14px !important;
+  gap: 0.5rem; // Space between delete button and trailing icon if both are shown
+}
+
+.trailing-icon {
+  color: rgba(0, 0, 0, 0.54); // Default Material icon color for meta icons
 }

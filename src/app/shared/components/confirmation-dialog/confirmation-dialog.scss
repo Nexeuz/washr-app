@@ -1,0 +1,29 @@
+.confirmation-dialog-container {
+  // You can set a max-width if you want the dialog to be a specific size
+  // max-width: 400px;
+}
+
+.dialog-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700; // Bold
+}
+
+.dialog-content {
+  font-family: "Noto Sans", sans-serif;
+  color: rgba(0, 0, 0, 0.6); // Material secondary text color
+}
+
+.dark-theme .dialog-content { // Example for dark mode
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem; // Spacing between buttons
+  padding: 0 24px 24px 24px; // Align with mat-dialog-content padding
+}
+
+.action-button {
+  text-transform: none !important;
+}
