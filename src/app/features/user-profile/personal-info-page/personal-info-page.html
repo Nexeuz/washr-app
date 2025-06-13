@@ -1,76 +1,76 @@
-<app-page-header title="Personal Data" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
+<app-page-header title="Datos Personales" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
 
 <div class="personal-info-page-container">
   <div class="form-content-wrapper">
     @if (isProfileCompletionMode()) {
-      <p class="completion-notice">Please complete your profile information.</p>
+      <p class="completion-notice">Por favor, complete la información de su perfil.</p>
     }
     <form [formGroup]="personalInfoForm" (ngSubmit)="onSave()" novalidate class="personal-info-form">
       <!-- Name Field -->
       <div class="form-field-group">
-        <label class="form-field-label" for="name-input-pi">Name</label>
+        <label class="form-field-label" for="name-input-pi">Nombre</label>
         <mat-form-field appearance="outline" class="form-field full-width">
-          <mat-label>Enter your name</mat-label>
+          <mat-label>Ingrese su nombre</mat-label>
           <input matInput id="name-input-pi" formControlName="name" required>
           @if (personalInfoForm.get('name')?.hasError('required') && personalInfoForm.get('name')?.touched) {
-            <mat-error>Name is required.</mat-error>
+            <mat-error>El nombre es requerido.</mat-error>
           }
         </mat-form-field>
       </div>
 
       <!-- Date of Birth Field with MatDatepicker -->
       <div class="form-field-group">
-        <label class="form-field-label" for="dob-input-pi">Date of Birth</label>
+        <label class="form-field-label" for="dob-input-pi">Fecha de Nacimiento</label>
         <mat-form-field appearance="outline" class="form-field full-width">
-          <mat-label>Select your date of birth</mat-label>
+          <mat-label>Seleccione su fecha de nacimiento</mat-label>
           <input matInput id="dob-input-pi" [matDatepicker]="dobPicker" formControlName="dateOfBirth" placeholder="MM/DD/YYYY" required readonly>
           <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
           <mat-datepicker #dobPicker></mat-datepicker>
           @if (personalInfoForm.get('dateOfBirth')?.hasError('required') && personalInfoForm.get('dateOfBirth')?.touched) {
-            <mat-error>Date of Birth is required.</mat-error>
+            <mat-error>La fecha de nacimiento es requerida.</mat-error>
           }
         </mat-form-field>
       </div>
 
       <!-- Email Field (Usually disabled) -->
       <div class="form-field-group">
-        <label class="form-field-label" for="email-input-pi">Email</label>
+        <label class="form-field-label" for="email-input-pi">Correo Electrónico</label>
         <mat-form-field appearance="outline" class="form-field full-width">
-          <mat-label>Email address</mat-label>
+          <mat-label>Dirección de correo electrónico</mat-label>
           <input matInput id="email-input-pi" formControlName="email" type="email" required>
            @if (personalInfoForm.get('email')?.hasError('required') && personalInfoForm.get('email')?.touched && personalInfoForm.get('email')?.enabled) {
-            <mat-error>Email is required.</mat-error>
+            <mat-error>El correo electrónico es requerido.</mat-error>
           }
           @if (personalInfoForm.get('email')?.hasError('email') && personalInfoForm.get('email')?.touched && personalInfoForm.get('email')?.enabled) {
-            <mat-error>Please enter a valid email.</mat-error>
+            <mat-error>Por favor, ingrese un correo válido.</mat-error>
           }
         </mat-form-field>
       </div>
 
       <!-- Gender Field -->
       <div class="form-field-group">
-        <label class="form-field-label" for="gender-select-pi">Gender</label>
+        <label class="form-field-label" for="gender-select-pi">Género</label>
         <mat-form-field appearance="outline" class="form-field full-width">
-          <mat-label>Select your gender</mat-label>
+          <mat-label>Seleccione su género</mat-label>
           <mat-select id="gender-select-pi" formControlName="gender" required>
             @for (option of genderOptions; track option.value) {
               <mat-option [value]="option.value">{{option.viewValue}}</mat-option>
             }
           </mat-select>
            @if (personalInfoForm.get('gender')?.hasError('required') && personalInfoForm.get('gender')?.touched) {
-            <mat-error>Gender is required.</mat-error>
+            <mat-error>El género es requerido.</mat-error>
           }
         </mat-form-field>
       </div>
 
             <!-- Phone Field (Usually disabled) -->
       <div class="form-field-group">
-        <label class="form-field-label" for="email-input-pi">Phone</label>
+        <label class="form-field-label" for="phone-input-pi">Teléfono</label>
         <mat-form-field appearance="outline" class="form-field full-width">
-          <mat-label>Teléfono</mat-label>
+          <mat-label>Ingrese su teléfono</mat-label>
           <input matInput id="email-input-pi" formControlName="phone" type="number" required>
            @if (personalInfoForm.get('phone')?.hasError('required') && personalInfoForm.get('phone')?.touched && personalInfoForm.get('phone')?.enabled) {
-            <mat-error>El celular es required.</mat-error>
+            <mat-error>El teléfono es requerido.</mat-error>
           }
 
         </mat-form-field>
@@ -92,7 +92,7 @@
           [showDivider]="!isLast">
         </app-list-item>
       } @empty {
-        <p class="empty-list-message">No addresses found. You can add one below.</p>
+        <p class="empty-list-message">No se encontraron direcciones. Puede agregar una a continuación.</p>
       }
     </mat-list>
   </div>
@@ -101,10 +101,10 @@
   <div class="footer-actions-container">
     <div class="footer-actions-wrapper">
       <button matButton="tonal" (click)="onAddAddress()" class="action-button add-address-button">
-        Add Address
+        Agregar Dirección
       </button>
       <button matButton="filled" (click)="onSave()" class="action-button save-button">
-        {{ isProfileCompletionMode() ? 'Complete Profile' : 'Save Changes' }}
+        {{ isProfileCompletionMode() ? 'Completar Perfil' : 'Guardar Cambios' }}
       </button>
     </div>
   </div>

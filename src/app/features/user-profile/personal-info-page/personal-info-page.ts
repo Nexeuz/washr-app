@@ -118,13 +118,16 @@ export class PersonalInfoPageComponent implements OnInit {
   // This signal indicates if the page is for initial profile completion vs. editing
   isProfileCompletionMode = signal(false);
 
+  private currentUser: User | null = this.authService.getCurrentUser();
+
 
   addresses = signal<AddressDisplayItem[]>([]);
 
   genderOptions: GenderOption[] = [
-    { value: 'male', viewValue: 'Male' },
-    { value: 'female', viewValue: 'Female' },
+    { value: 'male', viewValue: 'Masculino' },
+    { value: 'female', viewValue: 'Femenino' },
   ];
+
 
   constructor() { }
 
@@ -133,13 +136,9 @@ export class PersonalInfoPageComponent implements OnInit {
 
     this.authService.authState$.subscribe(user => {
       if (user) {
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser) {
-          this.router.navigate(['/auth/login']); // Should be caught by AuthGuard
-          return;
-        }
+        this.checkLoginStatus();
         // Ensure user document exists in Firestore and load data
-        this.checkAndLoadUserProfile(currentUser);
+        this.checkAndLoadUserProfile(user);
       }
 
     })
@@ -147,13 +146,33 @@ export class PersonalInfoPageComponent implements OnInit {
 
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy() {
 
+    const userDocRef = doc(this.firestore, `users/${this.currentUser?.uid}`);
+    let docSnap;
+
+
+
+    // Try loading from cache first (optional)
+    try {
+      docSnap = await getDocFromCache(userDocRef);
+      console.log('📦 Loaded profile from cache');
+    } catch (cacheError) {
+      console.warn('⚠️ No cache found. Loading from server...');
+      docSnap = await getDoc(userDocRef);
+    }
+
+    const userProfileData = docSnap.data();
+    if (userProfileData && userProfileData['isRegistrationComplete']) {
+      this.onSaveFirestore(false, userProfileData['isRegistrationComplete']);
+
+    } else {
+      this.onSaveFirestore();
+
+    }
 
     this.destroy$.next();
     this.destroy$.complete();
-    this.onSaveFirestore();
-
   }
 
 
@@ -163,11 +182,14 @@ export class PersonalInfoPageComponent implements OnInit {
       dateOfBirth: new FormControl<Date | null>(null, Validators.required),
       email: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.email]), // Email usually pre-filled and disabled
       phone: new FormControl('', [Validators.required, Validators.minLength(10)]),
-      gender: new FormControl<'male' | 'female' | null>(null, Validators.required),
+      gender: new FormControl<'male' | 'female' | null>(null),
     });
   }
 
   async checkAndLoadUserProfile(currentUser: User): Promise<void> {
+
+    this.currentUser = currentUser;
+
     const userDocRef = doc(this.firestore, `users/${currentUser.uid}`);
     try {
       let docSnap;
@@ -256,10 +278,18 @@ export class PersonalInfoPageComponent implements OnInit {
 
     addresses$.pipe(
       takeUntil(this.destroy$) // This will automatically unsubscribe when destroy$ emits
-    ).subscribe(addresses => {
-      console.log('Fetched addresses:', addresses);
-      this.addresses.set(addresses);
+    ).subscribe({
+      next: (addresses) => {
+        console.log('Fetched addresses:', addresses);
+        this.addresses.set(addresses);
+      },
+      error: (error) => {
+        console.error("Error fetching addresses:", error);
+        this._snackBar.open('No se pudieron cargar las direcciones.', 'Cerrar', { duration: 3000 });
+      }
     });
+
+
     // }
   }
 
@@ -270,8 +300,7 @@ export class PersonalInfoPageComponent implements OnInit {
       return;
     }
 
-
-    if (this.addresses.length == 0) {
+    if (this.addresses().length == 0) {
       this._snackBar.open('Debes añadir al menos una dirección', 'Ok');
       return;
     }
@@ -284,12 +313,8 @@ export class PersonalInfoPageComponent implements OnInit {
 
   async onSaveFirestore(onNavigateDasboard = false, isProfileCompletionMode = false): Promise<void> {
     const formData = this.personalInfoForm.getRawValue(); // Use getRawValue for all fields, including disabled email
-    const currentUser = this.authService.getCurrentUser();
 
-    if (!currentUser) {
-      this.router.navigate(['/auth/login']);
-      return;
-    }
+    this.checkLoginStatus();
 
     try {
       const dobForFirestore = formData.dateOfBirth
@@ -308,8 +333,12 @@ export class PersonalInfoPageComponent implements OnInit {
         updatedAt: serverTimestamp(),
       };
 
-      const userDocRef = doc(this.firestore, `users/${currentUser.uid}`);
-      await setDoc(userDocRef, profileDataToUpdate, { merge: true }); // Use merge:true to update existing or create if somehow still missing
+      if (this.currentUser) {
+        const userDocRef = doc(this.firestore, `users/${this.currentUser?.uid}`);
+        await setDoc(userDocRef, profileDataToUpdate, { merge: true }); // Use merge:true to update existing or create if somehow still missing  
+      }
+
+
 
       if (onNavigateDasboard) {
         console.log('Profile data saved to Firestore:', profileDataToUpdate);
@@ -318,6 +347,7 @@ export class PersonalInfoPageComponent implements OnInit {
 
     } catch (error: any) {
       console.error('Error saving profile:', error);
+      this._snackBar.open('Error al guardar el perfil. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
       // Handle save error (e.g., show notification)
     }
   }
@@ -335,41 +365,37 @@ export class PersonalInfoPageComponent implements OnInit {
   }
 
   onEditAddress(addressId: string): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      const userId = currentUser.uid
+    if (this.currentUser) {
+      const userId = this.currentUser.uid
       this.router.navigate(['/profile/edit-address', addressId, userId]);
     } else {
       console.error("Cannot edit address: no current user.");
     }
   }
-onDeleteAddress(addressId: string): void {
+  onDeleteAddress(addressId: string): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
-        title: 'Delete Address',
-        message: 'Are you sure you want to permanently delete this address?',
-        confirmButtonText: 'Delete'
+        title: 'Eliminar Dirección',
+        message: '¿Está seguro de que desea eliminar permanentemente esta dirección?',
+        confirmButtonText: 'Eliminar'
       } as ConfirmationDialogData,
       width: '320px',
     });
 
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
       if (!result) return;
-
-      const currentUser = this.authService.getCurrentUser();
-      if (!currentUser) {
-        this._snackBar.open('Session expired. Please log in again.', 'Close', { duration: 3000 });
-        return;
-      }
-
       try {
-        const addressDocRef = doc(this.firestore, `users/${currentUser.uid}/addresses/${addressId}`);
-        await deleteDoc(addressDocRef);
-        this._snackBar.open('Address deleted successfully.', 'Close', { duration: 2000 });
+        this.checkLoginStatus();
+        if (this.currentUser) {
+          const addressDocRef = doc(this.firestore, `users/${this.currentUser.uid}/addresses/${addressId}`);
+          await deleteDoc(addressDocRef);
+          this._snackBar.open('Dirección eliminada exitosamente.', 'Cerrar', { duration: 2000 });
+        }
+
         // The real-time subscription from `loadUserAddresses` will automatically update the UI.
       } catch (error) {
         console.error("Error deleting address:", error);
-        this._snackBar.open('Failed to delete address. Please try again.', 'Close', { duration: 3000 });
+        this._snackBar.open('Error al eliminar la dirección. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
       }
     });
   }
@@ -382,5 +408,14 @@ onDeleteAddress(addressId: string): void {
     }
   }
 
-  checkLoginStatus() {}
+  checkLoginStatus() {
+
+    this.currentUser = this.authService.getCurrentUser();
+    if (!this.currentUser) {
+      this._snackBar.open('Sesión expirada. Por favor, inicie sesión de nuevo.', 'Cerrar', { duration: 3000 });
+      this.router.navigate(['/auth/login']);
+      throw Error('Session no valida')
+    }
+
+  }
 }
