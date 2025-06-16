@@ -1,4 +1,4 @@
-<app-page-header [title]="pageTitle" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
+
 
 <div class="add-vehicle-page-container">
   <main class="content-area">
@@ -10,17 +10,15 @@
       <form [formGroup]="addVehicleForm" (ngSubmit)="onAddVehicle()" novalidate>
         <!-- Vehicle Type -->
         <div class="form-field-group">
-          <mat-radio-group
-            formControlName="vehicleType"
-            aria-labelledby="vehicle-type-label"
-            class="radio-group-container"
-            required>
+          <mat-radio-group formControlName="vehicleType" aria-labelledby="vehicle-type-label"
+            class="radio-group-container" required>
             @for (option of vehicleTypeOptions; track option.value) {
-              <mat-radio-button [value]="option.value" color="primary" class="custom-radio-button">{{option.viewValue}}</mat-radio-button>
+            <mat-radio-button [value]="option.value" color="primary"
+              class="custom-radio-button">{{option.viewValue}}</mat-radio-button>
             }
           </mat-radio-group>
           @if (addVehicleForm.get('vehicleType')?.hasError('required') && addVehicleForm.get('vehicleType')?.touched) {
-            <div class="mat-error-like-text">El tipo de vehículo es requerido.</div>
+          <div class="mat-error-like-text">El tipo de vehículo es requerido.</div>
           }
         </div>
 
@@ -29,8 +27,9 @@
           <mat-form-field appearance="outline" class="form-field full-width">
             <mat-label>Nombre del vehículo</mat-label>
             <input matInput formControlName="vehicleName" placeholder="Ej: Mi Sedán, Moto Roja" required>
-            @if (addVehicleForm.get('vehicleName')?.hasError('required') && addVehicleForm.get('vehicleName')?.touched) {
-              <mat-error>El nombre del vehículo es requerido.</mat-error>
+            @if (addVehicleForm.get('vehicleName')?.hasError('required') && addVehicleForm.get('vehicleName')?.touched)
+            {
+            <mat-error>El nombre del vehículo es requerido.</mat-error>
             }
           </mat-form-field>
         </div>
@@ -40,8 +39,9 @@
           <mat-form-field appearance="outline" class="form-field full-width">
             <mat-label>Placa</mat-label>
             <input matInput formControlName="licensePlate" placeholder="Ingrese la placa" required>
-            @if (addVehicleForm.get('licensePlate')?.hasError('required') && addVehicleForm.get('licensePlate')?.touched) {
-              <mat-error>La placa es requerida.</mat-error>
+            @if (addVehicleForm.get('licensePlate')?.hasError('required') &&
+            addVehicleForm.get('licensePlate')?.touched) {
+            <mat-error>La placa es requerida.</mat-error>
             }
           </mat-form-field>
         </div>
@@ -54,32 +54,55 @@
 
         <!-- Vehicle Photo Upload -->
         <div class="photo-upload-container">
- 
-          <app-file-upload-prompt
-            [vehicleImageUrl]="vehicleImageUrl() ?? ''"
-            title="Agregar foto"
-            subtitle="Tome o suba una foto de su vehículo"
-            buttonText="Elegir Foto"
-            buttonTextCamera="Tomar foto"
-            accept="image/*"
-            [multiple]="false"
-            (filesSelected)="selectedVehiclePhotos.set($event)">
+
+          <app-file-upload-prompt [vehicleImageUrl]="vehicleImageUrl() ?? ''" title="Agregar foto"
+            subtitle="Tome o suba una foto de su vehículo" buttonText="Elegir Foto" buttonTextCamera="Tomar foto"
+            accept="image/*" [multiple]="false" (filesSelected)="selectedVehiclePhotos.set($event)">
           </app-file-upload-prompt>
         </div>
       </form>
     </div>
   </main>
 
-  <!-- Sticky Footer Area for Actions -->
+
+  @if (router.url.includes('/auth')) {
+
+  <div class="footer-actions-container">
+    <div class="footer-actions-wrapper">
+      <button matButton="filled" (click)="onAddVehicle()" class="action-button confirm-button" [disabled]="isSaving()">
+        @if (isSaving()) {
+        <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+        } @else {
+        @if (vehicleId?.length && userId?.length) {
+        <span>Actualizar vehículo</span>
+        } @else {
+        <span>Agregar vehículo</span>
+        }
+        }
+      </button>
+    </div>
+
+  </div>
+
+  } @else {
+
   <footer class="footer-actions-container">
     <div class="footer-actions-wrapper">
-      <button matButton="filled"  (click)="onAddVehicle()" class="action-button confirm-button" [disabled]="isSaving()">
+      <button matButton="filled" (click)="onAddVehicle()" class="action-button confirm-button" [disabled]="isSaving()">
         @if (isSaving()) {
-          <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+        <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
         } @else {
-          <span>Agregar vehículo</span>
+        @if (vehicleId?.length && userId?.length) {
+        <span>Actualizar vehículo</span>
+        } @else {
+        <span>Agregar vehículo</span>
+        }
         }
       </button>
     </div>
   </footer>
+
+  }
+  <!-- Sticky Footer Area for Actions -->
+
 </div>

@@ -1,0 +1,129 @@
+
+<div class="profile-page-container">
+  @if (isLoading()) {
+    <div class="loading-container">
+      <p>Cargando perfil...</p>
+    </div>
+  } @else {
+    <!-- User Profile Section -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <img [src]="userProfile().photoUrl" [alt]="userProfile().name" class="avatar-image">
+      </div>
+      <h2 class="profile-name">{{ userProfile().name }}</h2>
+    </div>
+
+    <!-- Loyalty Program Section -->
+    <div class="section">
+      <h3 class="section-title">Programa de Lealtad</h3>
+      <mat-card class="loyalty-card">
+        <mat-card-content>
+          <div class="stamps-info">
+            <p class="stamps-text">Sellos: {{ washProgress().current }}/{{ washProgress().total }}</p>
+          </div>
+          <div class="progress-section">
+            <p class="progress-text">{{ washProgress().current }}/{{ washProgress().total }} lavados para obtener un lavado gratis</p>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="washProgress().percentage"
+              class="progress-bar">
+            </mat-progress-bar>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Rain Insurance Section -->
+    <div class="section">
+      <h3 class="section-title">Seguro de Lluvia 24 Horas</h3>
+      <mat-list>
+        <mat-list-item class="insurance-item">
+          <div matListItemTitle>
+            @if (rainInsurance().active) {
+              Activo: {{ rainInsurance().hoursRemaining }} horas restantes
+            } @else {
+              Inactivo
+            }
+          </div>
+          <div matListItemMeta>
+            <mat-icon>info</mat-icon>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <!-- Vehicles Section -->
+    <div class="section">
+      <h3 class="section-title">Vehículos</h3>
+      <mat-list>
+        @if (vehicles().length > 0) {
+          @for (vehicle of vehicles(); track vehicle.id) {
+            <mat-list-item class="vehicle-item" (click)="onVehiclesClick()">
+              <div matListItemAvatar>
+                <mat-icon class="vehicle-icon">directions_car</mat-icon>
+              </div>
+              <div matListItemTitle>Placa: {{ vehicle.licensePlate }}</div>
+              <div matListItemLine>{{ vehicle.name }}</div>
+              <div matListItemMeta>
+                <mat-icon>arrow_forward_ios</mat-icon>
+              </div>
+            </mat-list-item>
+          }
+        } @else {
+          <mat-list-item>
+            <div matListItemTitle>No hay vehículos registrados</div>
+            <div matListItemMeta>
+              <mat-icon>arrow_forward_ios</mat-icon>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
+
+    <!-- Booking History Section -->
+    <div class="section">
+      <h3 class="section-title">Historial de Reservas</h3>
+      <mat-list>
+        <mat-list-item class="clickable-item" (click)="onBookingHistoryClick()">
+          <div matListItemTitle>Ver Historial de Reservas</div>
+          <div matListItemMeta>
+            <mat-icon>arrow_forward_ios</mat-icon>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <!-- Personal Details Section -->
+    <div class="section">
+      <h3 class="section-title">Datos Personales</h3>
+      <mat-list>
+        <mat-list-item>
+          <div matListItemTitle>Nombre: {{ userProfile().name }}</div>
+        </mat-list-item>
+        <mat-list-item>
+          <div matListItemTitle>Correo: {{ userProfile().email }}</div>
+        </mat-list-item>
+        <mat-list-item class="clickable-item" (click)="onPersonalDetailsClick()">
+          <div matListItemTitle>Teléfono: {{ userProfile().phone }}</div>
+          <div matListItemMeta>
+            <mat-icon>arrow_forward_ios</mat-icon>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="section">
+      <h3 class="section-title">Configuración</h3>
+      <mat-list>
+        <mat-list-item class="clickable-item" (click)="onHelpSupportClick()">
+          <div matListItemTitle>Ayuda y Soporte</div>
+          <div matListItemMeta>
+            <mat-icon>arrow_forward_ios</mat-icon>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  }
+</div>
+

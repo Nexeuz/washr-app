@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatRippleModule } from '@angular/material/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
+import { TitleService } from '../../../core/services/title';
 
 // Shared Components (ensure PageHeaderComponent is also not using Tailwind for its internal layout if this is a full switch)
 
@@ -38,7 +39,6 @@ interface ServiceCard {
     MatIconModule,
     MatToolbarModule,
     MatRippleModule,
-    PageHeaderComponent
   ],
   templateUrl: './dashboard-page.html',
   styleUrls: ['./dashboard-page.scss'],
@@ -48,6 +48,8 @@ export class DashboardPageComponent implements OnInit {
   @HostBinding('class.dashboard-page-host') hostClass = true;
 
   private router = inject(Router);
+  titleService = inject(TitleService); // Signal to hold breadcrumb data
+
 
   userName = signal("Alex"); // Example user name, fetch from AuthService or a user service
 
@@ -55,17 +57,17 @@ export class DashboardPageComponent implements OnInit {
     {
       id: 'schedule-wash',
       imageUrl: 'https://placehold.co/600x338/e0e0e0/757575?text=Car+Wash+Service', // Placeholder
-      title: 'Schedule a Wash',
-      description: 'Book a professional wash for your vehicle at your convenience.',
-      buttonText: 'Book Now',
+           title: 'Programar un lavado',
+      description: 'Reserva un lavado profesional para tu vehículo a tu conveniencia.',
+      buttonText: 'Reservar ahora',
       route: '/services/schedule-wash' // Example route
     },
     {
       id: 'flat-tire',
       imageUrl: 'https://placehold.co/600x338/eeeeee/9e9e9e?text=Tire+Repair', // Placeholder
-      title: 'Flat Tire Fix',
-      description: 'Get immediate assistance for flat tires, wherever you are.',
-      buttonText: 'Request Help',
+      title: 'Reparación de pinchazos',
+      description: 'Obtén asistencia inmediata para pinchazos, dondequiera que estés.',
+      buttonText: 'Solicitar ayuda',
       route: '/services/roadside-assistance' // Example route
     }
   ]);
@@ -75,6 +77,7 @@ export class DashboardPageComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+        this.titleService.setTitle('Página principal'); // Set the page title
   
   }
 

@@ -21,6 +21,7 @@ import { AuthService } from '../../../core/services/auth';
 import { deleteDoc, doc, DocumentData, FirestoreDataConverter, getDoc, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { ref, Storage } from '@angular/fire/storage';
 import { deleteObject } from 'firebase/storage';
+import { TitleService } from '../../../core/services/title';
 // Model for a vehicle
 interface VehicleDisplayItem {
   name: string;
@@ -65,7 +66,6 @@ const vehicleConverter: FirestoreDataConverter<VehicleDisplayItem> = {
   standalone: true,
   imports: [
     CommonModule,
-    PageHeaderComponent,
     MatListModule,
     MatIconModule,
     MatButtonModule,
@@ -81,21 +81,22 @@ export class VehicleListPageComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  private router = inject(Router);
+  router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private firestore = inject(Firestore);
   private snackBar = inject(MatSnackBar);
   private storage = inject(Storage);
+  titleService = inject(TitleService); // Signal to hold breadcrumb data
 
-  pageTitle = 'Mis Vehículos';
+
   vehicles = signal<VehicleDisplayItem[]>([]);
   isLoading = signal(true); // To show a loading state initially
 
   constructor() { }
 
   ngOnInit(): void {
-    debugger
+    this.titleService.setTitle('Mis Vehículos'); // Set the page titl
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       this.loadUserVehicles(currentUser.uid);
@@ -125,17 +126,16 @@ export class VehicleListPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  onAddVehicle(): void {
-    console.log('Navigating to Add Vehicle page');
-    this.router.navigate(['add'], { relativeTo: this.activeRoute });
-  }
+async onAddVehicle(): Promise<void> {
+    await this.router.navigate(['../add'], { relativeTo: this.activeRoute })
+}
 
   onEditVehicle(vehicleId: string): void {
     console.log(`Navigating to edit vehicle with ID: ${vehicleId}`);
     // Assuming you will create an edit route like /vehicles/edit/:id
-    this.router.navigate(['edit',
-      { relativeTo: this.activeRoute },
-      this.authService.getCurrentUser()?.uid || '', vehicleId]
+    this.router.navigate(['../edit',
+      this.authService.getCurrentUser()?.uid || '', vehicleId],
+       { relativeTo: this.activeRoute }
     );
   }
 

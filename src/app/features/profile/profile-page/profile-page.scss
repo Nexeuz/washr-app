@@ -1,0 +1,147 @@
+.profile-page-container {
+  padding: 0;
+  background-color: #fafafa;
+  min-height: 100vh;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 16px;
+  
+  p {
+    font-size: 16px;
+    color: #666;
+  }
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  background-color: #fafafa;
+  gap: 16px;
+}
+
+.profile-avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #141414;
+  margin: 0;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #141414;
+  padding: 16px 16px 8px 16px;
+  margin: 0;
+}
+
+.loyalty-card {
+  margin: 0 16px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stamps-info {
+  margin-bottom: 16px;
+}
+
+.stamps-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #141414;
+  margin: 0;
+}
+
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #141414;
+  margin: 0;
+}
+
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #dbdbdb;
+}
+
+.progress-bar ::ng-deep .mat-progress-bar-fill::after {
+  background-color: #000000;
+}
+
+.insurance-item,
+.vehicle-item,
+.clickable-item {
+  background-color: #fafafa;
+  padding: 16px;
+  min-height: 56px;
+}
+
+.vehicle-icon {
+  background-color: #ededed;
+  border-radius: 8px;
+  padding: 12px;
+  color: #141414;
+}
+
+.clickable-item {
+  cursor: pointer;
+}
+
+.clickable-item:hover {
+  background-color: #f0f0f0;
+}
+
+mat-list {
+  padding: 0;
+}
+
+mat-list-item {
+  border-bottom: none;
+}
+
+mat-list-item:not(:last-child) {
+  border-bottom: 1px solid #ededed;
+}
+
+::ng-deep .mat-mdc-list-item-unscoped-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-list-item-meta {
+  margin-left: auto;
+}
+

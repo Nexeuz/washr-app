@@ -85,12 +85,12 @@ export const routes: Routes = [
       {
         path: 'add-address/:userId',
         loadComponent: () => import('../user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
-        title: 'New Address - Washr App'
+        title: 'New Address - Washr App',
       },
       {
         path: 'edit-address/:id/:userId',
         loadComponent: () => import('../user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
-        title: 'Edit Address - Washr App'
+        title: 'Edit Address - Washr App',
       },
     ],
   },
@@ -105,12 +105,17 @@ export const routes: Routes = [
         loadComponent: () => import('../dashboard/dashboard-page/dashboard-page').then(m => m.DashboardPageComponent),
       },
       {
+        path: 'profile',
+        loadComponent: () => import('../profile/profile-page/profile-page').then(m => m.ProfilePageComponent),
+        data: { title: 'Mi Perfil' } // Added for TitleService
+      },
+      {
         path: 'vehicles',
         children: [
           {
             path: 'list',
             loadComponent: () => import('../vehicles/vehicle-list-page/vehicle-list-page').then(m => m.VehicleListPageComponent),
-            title: 'List Vehicles - Washr App'
+            title: 'List Vehicles - Washr App',
           },
           {
             path: 'add',
@@ -120,7 +125,7 @@ export const routes: Routes = [
           {
             path: 'edit/:userId/:vehicleId',
             loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
-            title: 'Edit Vehicle - Washr App'
+            title: 'Edit Vehicle - Washr App',
           },
           {
             path: '**', // Wildcard route for vehicles
@@ -162,37 +167,7 @@ export const routes: Routes = [
     ]
   },
 
-  // Vehicles Feature Routes
-  {
-    path: 'vehicles', // Optional parent path for vehicle-related routes
-    canActivate: [profileCompleteAuthAllowGuard], // Example: Protect these routes
-    children: [
-      {
-        path: 'list', // Full path: /vehicles/add
-        loadComponent: () =>
-          import(
-            '../vehicles/vehicle-list-page/vehicle-list-page'
-          ).then((m) => m.VehicleListPageComponent),
-        title: 'Listar Vehicle - Washr App'
-      },
-      {
-        path: 'add', // Full path: /vehicles/add
-        loadComponent: () =>
-          import(
-            '../vehicles/add-vehicle-page/add-vehicle-page'
-          ).then((m) => m.AddVehiclePageComponent),
-        title: 'Add Vehicle - Washr App'
-      },
-      {
-        path: 'edit/:userId/:vehicleId', // Full path: /vehicles/add
-        loadComponent: () =>
-          import(
-            '../vehicles/add-vehicle-page/add-vehicle-page'
-          ).then((m) => m.AddVehiclePageComponent),
-        title: 'Edit Vehicle - Washr App'
-      },
-    ],
-  },
+
 
   // Default and Wildcard Routes
   {

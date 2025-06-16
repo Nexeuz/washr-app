@@ -1,62 +1,86 @@
-<app-page-header [title]="pageTitle" [showBackButton]="true" (backButtonClick)="handleHeaderBackClick()"></app-page-header>
+
 
 <div class="vehicle-list-page-container">
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <p>Cargando vehiculos...</p>
+    </div>
+  } @else {
   <main class="content-area">
+    
     <div class="list-wrapper">
       <!-- Show this block only if there are vehicles -->
       @if (vehicles().length > 0) {
-        <mat-list role="list">
-          @for (vehicle of vehicles(); track vehicle.id; let isLast = $last) {
-            <mat-list-item role="listitem" class="vehicle-list-item">
-              <div matListItemAvatar class="vehicle-image-container">
-                <div class="vehicle-image" [style.background-image]="'url(' + (vehicle.imageUrl || '[https://placehold.co/112x112/e0e0e0/757575?text=Auto](https://placehold.co/112x112/e0e0e0/757575?text=Auto)') + ')'" role="img" [attr.aria-label]="vehicle.name + ' image'"></div>
-              </div>
-              <div matListItemTitle class="vehicle-name">{{ vehicle.name }}</div>
-              <div matListItemLine class="vehicle-plate">Placa: {{ vehicle.licensePlate }}</div>
-              <div matListItemMeta class="vehicle-actions">
-                <button matIconButton [attr.aria-label]="'Editar ' + vehicle.name" (click)="onEditVehicle(vehicle.id)">
-                  <mat-icon>edit</mat-icon> <!-- Using the standard edit pencil icon -->
-                </button>
-                <button matIconButton [attr.aria-label]="'Eliminar ' + vehicle.name" (click)="onDeleteVehicle(vehicle.id)">
-                  <mat-icon>delete</mat-icon> <!-- Using the standard edit pencil icon -->
-                </button>
-              </div>
-            </mat-list-item>
-            @if (!isLast) {
-              <mat-divider></mat-divider>
-            }
-          }
-        </mat-list>
+      <mat-list role="list">
+        @for (vehicle of vehicles(); track vehicle.id; let isLast = $last) {
+        <mat-list-item role="listitem" class="vehicle-list-item">
+          <div matListItemAvatar class="vehicle-image-container">
+            <div class="vehicle-image"
+              [style.background-image]="'url(' + (vehicle.imageUrl || '[https://placehold.co/112x112/e0e0e0/757575?text=Auto](https://placehold.co/112x112/e0e0e0/757575?text=Auto)') + ')'"
+              role="img" [attr.aria-label]="vehicle.name + ' image'"></div>
+          </div>
+          <div matListItemTitle class="vehicle-name">{{ vehicle.name }}</div>
+          <div matListItemLine class="vehicle-plate">Placa: {{ vehicle.licensePlate }}</div>
+          <div matListItemMeta class="vehicle-actions">
+            <button matIconButton [attr.aria-label]="'Editar ' + vehicle.name" (click)="onEditVehicle(vehicle.id)">
+              <mat-icon>edit</mat-icon> <!-- Using the standard edit pencil icon -->
+            </button>
+            <button matIconButton [attr.aria-label]="'Eliminar ' + vehicle.name" (click)="onDeleteVehicle(vehicle.id)">
+              <mat-icon>delete</mat-icon> <!-- Using the standard edit pencil icon -->
+            </button>
+          </div>
+        </mat-list-item>
+        @if (!isLast) {
+        <mat-divider></mat-divider>
+        }
+        }
+      </mat-list>
       } @else if (vehicles().length == 0) {
-        <!-- Show this block if loading is complete AND there are no vehicles -->
-        <div class="empty-state-container">
-          <div class="empty-state-image-wrapper">
-            <div class="empty-state-image" style="background-image: url('assets/images/car.png');"></div>
-          </div>
-          <div class="empty-state-text-wrapper">
-            <p class="empty-state-title">No hay Vehículos Agregados</p>
-            <p class="empty-state-subtitle">Agrega tu primer vehículo para administrar servicios y dar seguimiento a los lavados.</p>
-          </div>
-          <button matButton="filled" class="empty-state-button" (click)="onAddVehicle()">
-            <span>Agregar Tu Primer Vehículo</span>
-          </button>
+      <!-- Show this block if loading is complete AND there are no vehicles -->
+      <div class="empty-state-container">
+        <div class="empty-state-image-wrapper">
+          <div class="empty-state-image" style="background-image: url('assets/images/car.png');"></div>
         </div>
+        <div class="empty-state-text-wrapper">
+          <p class="empty-state-title">No hay Vehículos Agregados</p>
+          <p class="empty-state-subtitle">Agrega tu primer vehículo para administrar servicios y dar seguimiento a los
+            lavados.</p>
+        </div>
+        <button matButton="filled" class="empty-state-button" (click)="onAddVehicle()">
+          <span>Agregar Tu Primer Vehículo</span>
+        </button>
+      </div>
       }
     </div>
-  </main>
+        @if (router.url.includes('/dasboard')) {
+          @if (vehicles().length > 0) {
 
-  <!-- Sticky Footer Area for Actions -->
-  @if (vehicles().length > 0) {
-    <footer class="footer-actions-container">
-      <div class="footer-actions-wrapper">
-        <button matButton="filled" (click)="onAddVehicle()" class="action-button add-vehicle-button">
-          Agregar Vehículo
-        </button>
-        <button matButton="tonal" (click)="onConfirmSelection()" class="action-button confirm-button">
-          Confirmar
-        </button>
-  
-      </div>
-    </footer>
+    <button matButton="filled" (click)="onAddVehicle()" class="action-button add-vehicle-button">
+      Agregar Vehículo
+    </button>
   }
+      }
+
+  </main>
+  
+  <!-- Sticky Footer Area for Actions -->
+
+  @if (router.url.includes('/auth')) {
+  @if (vehicles().length > 0) {
+  <footer class="footer-actions-container">
+    <div class="footer-actions-wrapper">
+      <button matButton="filled" (click)="onAddVehicle()" class="action-button add-vehicle-button">
+        Agregar Vehículo
+      </button>
+      <button matButton="tonal" (click)="onConfirmSelection()" class="action-button confirm-button">
+        Confirmar
+      </button>
+
+    </div>
+  </footer>
+  }
+  }
+}
+
 </div>

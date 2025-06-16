@@ -1,29 +1,29 @@
 <div class="login-page-container">
   <div class="login-content-wrapper">
     <h2 class="page-title">
-      Welcome back
+      Bienvenido de nuevo
     </h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Email</mat-label>
+        <mat-label>Correo electrónico</mat-label>
         <input matInput formControlName="email" type="email" placeholder="Enter your email" required>
         @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-          <mat-error>Email is required.</mat-error>
+          <mat-error>El correo electrónico es obligatorio.</mat-error>
         }
         @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-          <mat-error>Please enter a valid email address.</mat-error>
+          <mat-error>Por favor, introduce una dirección de correo electrónico válida.</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Password</mat-label>
+        <mat-label>Contraseña</mat-label>
         <input matInput formControlName="password" type="password" placeholder="Enter your password" required>
         @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
-          <mat-error>Password is required.</mat-error>
+          <mat-error>La contraseña es obligatoria.</mat-error>
         }
         @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
-          <mat-error>Password must be at least 6 characters.</mat-error>
+          <mat-error>La contraseña debe tener al menos 6 caracteres.</mat-error>
         }
       </mat-form-field>
 
@@ -32,29 +32,29 @@
       }
 
       <button matButton="filled" color="primary" type="submit" class="action-button login-button full-width" [disabled]="loginForm.invalid">
-        Log in
+        Iniciar sesión
       </button>
     </form>
 
     <p class="separator-text">
-      Or continue with
+      O continuar con
     </p>
 
     <div class="social-buttons-group">
       <button mat-flat-button class="action-button social-button google-signin-button full-width" (click)="onSocialLogin('Google')">
         <mat-icon svgIcon="google-brand-logo" class="social-icon"></mat-icon>
-        <span>Continue with Google</span>
+        <span>Continuar con Google</span>
       </button>
       <button mat-flat-button class="action-button social-button facebook-signin-button full-width" (click)="onSocialLogin('Facebook')">
         <mat-icon svgIcon="facebook-brand-logo" class="social-icon"></mat-icon>
-        <span>Continue with Facebook</span>
+        <span>Continuar con Facebook</span>
       </button>
     </div>
 
     <p class="footer-text">
-      Don't have an account?
+      ¿No tienes una cuenta?
       <a routerLink="/auth/sign-in" class="footer-link">
-        Sign up
+        Regístrate
       </a>
     </p>
   </div>

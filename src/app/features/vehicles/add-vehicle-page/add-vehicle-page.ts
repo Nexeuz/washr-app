@@ -28,6 +28,7 @@ import { AuthService } from '../../../core/services/auth';
 import { Subject, takeUntil } from 'rxjs';
 import { User, user } from '@angular/fire/auth';
 import { deleteObject } from 'firebase/storage';
+import { TitleService } from '../../../core/services/title';
 
 
 
@@ -52,7 +53,7 @@ interface VehicleTypeOption {
   selector: 'app-add-vehicle-page',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, PageHeaderComponent, FileUploadPromptComponent,
+    CommonModule, ReactiveFormsModule, FileUploadPromptComponent,
     MatFormFieldModule, MatInputModule, MatRadioModule, MatSlideToggleModule,
     MatButtonModule, MatIconModule,
     MatSnackBarModule,
@@ -70,14 +71,15 @@ export class AddVehiclePageComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   private firestore = inject(Firestore);
-  private router = inject(Router);
+  router = inject(Router);
+  titleService = inject(TitleService); // Signal to hold breadcrumb data
   private activatedRouter = inject(ActivatedRoute);
 
 
   private destroy$ = new Subject<void>();
 
-  private userId: string | null = null; // To hold the user ID from the route parameters
-  private vehicleId: string | null = null; // To hold the vehicle ID from the route parameters
+  userId: string | null = null; // To hold the user ID from the route parameters
+  vehicleId: string | null = null; // To hold the vehicle ID from the route parameters
 
 
 
@@ -88,7 +90,6 @@ export class AddVehiclePageComponent implements OnInit, OnDestroy {
   // private vehicleService = inject(VehicleService);
 
   addVehicleForm!: FormGroup<AddVehicleForm>;
-  pageTitle = 'Agrega tu vehículo';
 
   vehicleTypeOptions: VehicleTypeOption[] = [
     { value: 'motorcycle', viewValue: 'Motocicleta' },
@@ -98,7 +99,7 @@ export class AddVehiclePageComponent implements OnInit, OnDestroy {
   selectedVehiclePhotos = signal<File[] | null>(null);
 
   ngOnInit(): void {
-    debugger
+    this.titleService.setTitle('Agregar Vehículo');
     this.addVehicleForm = this.fb.group({
       vehicleType: new FormControl('', Validators.required),
       vehicleName: new FormControl('', Validators.required),
@@ -124,6 +125,7 @@ export class AddVehiclePageComponent implements OnInit, OnDestroy {
       this.vehicleId = params.get('vehicleId');
 
       if (this.userId && this.vehicleId) {
+              this.titleService.setTitle('Editar Vehículo');
         this.onLoadVehicleData(this.userId, this.vehicleId);
       }
     });
@@ -156,7 +158,7 @@ export class AddVehiclePageComponent implements OnInit, OnDestroy {
       } else {
         console.error(`No vehicle found with ID: ${vehicleId}`);
         this.snackBar.open('Vehículo no encontrado.', 'Cerrar', { duration: 3000 });
-        this.router.navigate(['/vehicles/list']);
+        this.router.navigate(['list', {relativeTo: this.activatedRouter}]); // Redirect to vehicle list if not found
       }
     } catch (error) {
       console.error("Error loading vehicle data:", error);
