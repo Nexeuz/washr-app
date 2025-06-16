@@ -1,13 +1,12 @@
 // Path: src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guards/auth-guard';
-import { profileCompleteDasboard, profileCompleteGuardAuth, profileCompleteGuardProfile } from '../../core/guards/profile-complete-guard';
+import { profileCompleteDasboard as profileCompleteAuthAllowGuard, profileCompleteGuardAuth, profileCompleteGuardProfile } from '../../core/guards/profile-complete-guard';
 
 export const routes: Routes = [
   // Authentication Feature Routes
   {
     path: 'auth', // Optional parent path for auth-related routes
-    canActivate: [profileCompleteGuardAuth], // Apply publicAuthGuard to the parent 'auth' route
     children: [
       {
         path: 'login', // Full path: /auth/login
@@ -15,6 +14,7 @@ export const routes: Routes = [
           import('../auth/login-page/login-page').then(
             (m) => m.LoginPageComponent
           ),
+        canActivate: [profileCompleteGuardAuth], // Apply publicAuthGuard to the parent 'auth' route
         title: 'Login - Washr App' // Optional: For browser tab title
       },
       {
@@ -23,29 +23,55 @@ export const routes: Routes = [
           import('../auth/sign-in-page/sign-in-page').then(
             (m) => m.SignInPageComponent
           ),
+        canActivate: [profileCompleteGuardAuth], // Apply publicAuthGuard to the parent 'auth' route
         title: 'Sign In - Washr App'
       },
-
       {
+        canActivate: [profileCompleteGuardAuth], // Apply publicAuthGuard to the parent 'auth' route
         path: 'sign-up-email', // Page for email/password creation
         loadComponent: () => import('../auth/sign-up-email-page/sign-up-email-page').then(m => m.SignUpEmailPageComponent),
         title: 'Sign Up - Washr App'
       },
+      {
+        path: 'vehicles',
+        canActivate: [profileCompleteAuthAllowGuard], // Apply publicAuthGuard to the parent 'auth' route
+
+        children: [
+          {
+            path: 'list',
+            loadComponent: () => import('../vehicles/vehicle-list-page/vehicle-list-page').then(m => m.VehicleListPageComponent),
+            title: 'List Vehicles - Washr App'
+          },
+          {
+            path: 'add',
+            loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
+            title: 'Add Vehicle - Washr App',
+          },
+          {
+            path: 'edit/:userId/:vehicleId',
+            loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
+            title: 'Edit Vehicle - Washr App'
+          },
+          {
+            path: '**', // Wildcard route for vehicles
+            redirectTo: 'list', // Redirect to the vehicle list if no specific route matches
+          }
+        ]
+      },
 
 
-      // You might add a sign-up route here later
-      // {
-      //   path: 'sign-up',
-      //   loadComponent: () => import('./features/auth/sign-up-page/sign-up-page.component').then(m => m.SignUpPageComponent),
-      //   title: 'Sign Up - Washr App'
-      // },
+      {
+        path: '**', // Wildcard route for vehicles
+        redirectTo: 'sign-in', // Redirect to the vehicle list if no specific route matches
+      },
     ],
+
   },
 
   // User Profile Feature Routes
   {
     path: 'profile', // Optional parent path for profile-related routes
-   /// canActivate: [authGuard], // Protect this entire feature
+    /// canActivate: [authGuard], // Protect this entire feature
     canActivate: [profileCompleteGuardProfile], // Example: Protect these routes if you have an AuthGuard
     children: [
       {
@@ -56,7 +82,7 @@ export const routes: Routes = [
           ).then((m) => m.PersonalInfoPageComponent),
         title: 'Personal Information - Washr App'
       },
-            {
+      {
         path: 'add-address/:userId',
         loadComponent: () => import('../user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
         title: 'New Address - Washr App'
@@ -69,15 +95,43 @@ export const routes: Routes = [
     ],
   },
 
-    {
+  {
     path: 'dasboard',
-    canActivate: [profileCompleteDasboard],
-    loadComponent: () => import('../dashboard/dashboard-page/dashboard-page').then(m => m.DashboardPageComponent),
+    canActivate: [profileCompleteAuthAllowGuard],
+    loadComponent: () => import('../dashboard/dasboard-container/dasboard-container').then(m => m.DasboardContainer),
     children: [
+      {
+        path: '', // Default child route for dashboard
+        loadComponent: () => import('../dashboard/dashboard-page/dashboard-page').then(m => m.DashboardPageComponent),
+      },
+      {
+        path: 'vehicles',
+        children: [
+          {
+            path: 'list',
+            loadComponent: () => import('../vehicles/vehicle-list-page/vehicle-list-page').then(m => m.VehicleListPageComponent),
+            title: 'List Vehicles - Washr App'
+          },
+          {
+            path: 'add',
+            loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
+            title: 'Add Vehicle - Washr App',
+          },
+          {
+            path: 'edit/:userId/:vehicleId',
+            loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
+            title: 'Edit Vehicle - Washr App'
+          },
+          {
+            path: '**', // Wildcard route for vehicles
+            redirectTo: 'list', // Redirect to the vehicle list if no specific route matches
+          }
+        ]
+      }
     ]
   },
 
-   // Service Example Routes (New - based on dashboard card actions)
+  // Service Example Routes (New - based on dashboard card actions)
   {
     path: 'services',
     canActivate: [authGuard],
@@ -111,8 +165,16 @@ export const routes: Routes = [
   // Vehicles Feature Routes
   {
     path: 'vehicles', // Optional parent path for vehicle-related routes
-    canActivate: [authGuard], // Example: Protect these routes
+    canActivate: [profileCompleteAuthAllowGuard], // Example: Protect these routes
     children: [
+      {
+        path: 'list', // Full path: /vehicles/add
+        loadComponent: () =>
+          import(
+            '../vehicles/vehicle-list-page/vehicle-list-page'
+          ).then((m) => m.VehicleListPageComponent),
+        title: 'Listar Vehicle - Washr App'
+      },
       {
         path: 'add', // Full path: /vehicles/add
         loadComponent: () =>
@@ -121,12 +183,14 @@ export const routes: Routes = [
           ).then((m) => m.AddVehiclePageComponent),
         title: 'Add Vehicle - Washr App'
       },
-      // You might add a vehicle list route here later
-      // {
-      //   path: 'list',
-      //   loadComponent: () => import('./features/vehicles/vehicle-list-page/vehicle-list-page.component').then(m => m.VehicleListPageComponent),
-      //   title: 'My Vehicles - Washr App'
-      // },
+      {
+        path: 'edit/:userId/:vehicleId', // Full path: /vehicles/add
+        loadComponent: () =>
+          import(
+            '../vehicles/add-vehicle-page/add-vehicle-page'
+          ).then((m) => m.AddVehiclePageComponent),
+        title: 'Edit Vehicle - Washr App'
+      },
     ],
   },
 

@@ -1,11 +1,5 @@
 <div class="dashboard-container">
-  <app-page-header title="AutoCare" [showBackButton]="false" [showActionsSlot]="true">
-    <ng-container page-header-actions>
-      <button mat-icon-button (click)="onSettingsClick()" aria-label="Settings" class="settings-button">
-        <mat-icon>settings</mat-icon>
-      </button>
-    </ng-container>
-  </app-page-header>
+
 
   <main class="dashboard-content">
     <h2 class="welcome-message">
@@ -42,20 +36,5 @@
     </div>
   </main>
 
-  <mat-toolbar class="bottom-nav-toolbar">
-    <div class="bottom-nav-inner-container">
-      @for (item of bottomNavItems(); track item.route) {
-        <button
-          mat-icon-button
-          class="bottom-nav-item"
-          [class.active-nav-item]="item.isActive"
-          (click)="onBottomNavItemClick(item)"
-          [attr.aria-label]="item.label"
-          matRipple [matRippleUnbounded]="false">
-          <mat-icon class="bottom-nav-icon">{{ item.icon }}</mat-icon>
-          <span class="bottom-nav-label">{{ item.label }}</span>
-        </button>
-      }
-    </div>
-  </mat-toolbar>
+
   <div class="bottom-nav-spacer"></div> </div>

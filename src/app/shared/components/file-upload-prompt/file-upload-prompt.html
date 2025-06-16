@@ -1,45 +1,68 @@
-<div [ngClass]="customContainerClasses" (click)="triggerFileInput(fileInputRef)" role="button" tabindex="0" (keydown.enter)="triggerFileInput(fileInputRef)" (keydown.space)="triggerFileInput(fileInputRef)">
-  <div class="flex flex-col items-center gap-2">
+<div class="file-prompt-container" role="button" tabindex="0" (keydown.enter)="triggerFileInput(fileInputRef)"
+  (keydown.space)="triggerFileInput(fileInputRef)">
+  <div class="text-wrapper">
     @if (title) {
-      <p [ngClass]="customTitleClasses">{{ title }}</p>
+    <p class="title">{{ title }}</p>
     }
     @if (subtitle) {
-      <p [ngClass]="customSubtitleClasses">{{ subtitle }}</p>
+    <p class="subtitle">{{ subtitle }}</p>
     }
   </div>
 
   @if (filePreviews().length > 0) {
-    <div class="mt-4 flex flex-wrap justify-center gap-2">
-      @for (preview of filePreviews(); track $index) {
-        <img [src]="preview" alt="Selected file preview {{$index + 1}}" class="h-20 w-20 object-cover rounded border border-neutral-300 dark:border-neutral-600">
-      }
-      @if (selectedFileCount() > filePreviews().length && selectedFileCount() > maxPreviews) {
-        <div class="flex items-center justify-center h-20 w-20 bg-neutral-100 dark:bg-neutral-700 rounded border border-neutral-300 dark:border-neutral-600 text-neutral-500 dark:text-neutral-300 text-sm">
-          +{{ selectedFileCount() - filePreviews().length }} more
-        </div>
-      }
+  <div class="previews-container">
+    @for (preview of filePreviews(); track $index) {
+    <img [src]="preview" alt="Selected file preview {{$index + 1}}" class="preview-image">
+    }
+    @if (selectedFileCount() > filePreviews().length && selectedFileCount() > maxPreviews) {
+    <div class="preview-more-indicator">
+      +{{ selectedFileCount() - filePreviews().length }} más
     </div>
+    }
+  </div>
   }
-  @if (selectedFileCount() > 0) {
-    <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">{{ selectedFileCount() }} file(s) selected</p>
+  @if (selectedFileCount() > 1) {
+  <p class="file-count-text">{{ selectedFileCount() }} archivos(s) seleccionados</p>
   }
 
-  <button
-    mat-stroked-button
-    type="button"
-    class="mt-4 custom-choose-photos-button"
+  @if (selectedFileCount() == 1) {
+  <p class="file-count-text">{{ selectedFileCount() }} archivo seleccionado</p>
+  }
+
+
+
+  <button matButton="outlined" type="button" class="choose-photos-button"
     (click)="$event.stopPropagation(); onPromptButtonClicked(fileInputRef)">
     @if(buttonIcon) {
-      <mat-icon>{{ buttonIcon }}</mat-icon>
+    <mat-icon>{{ buttonIcon }}</mat-icon>
     }
     <span>{{ buttonText }}</span>
   </button>
 
-  <input
-    type="file"
-    class="hidden"
-    #fileInputRef
-    [accept]="accept"
+  <button matButton="outlined" type="button" class="choose-photos-button"
+    (click)="$event.stopPropagation(); onPromptButtonClicked(fileInputCamera)">
+    @if(buttonIcon) {
+    <mat-icon>{{ buttonIconCamera }}</mat-icon>
+    }
+    <span>{{ buttonTextCamera }}</span>
+  </button>
+
+
+  <!-- Hidden file input -->
+  <input type="file"
+    class="hidden-file-input"
+    #fileInputRef 
+    [accept]="accept" 
     [multiple]="multiple"
     (change)="onFileChanged($event)" />
+
+  <input #fileInputCamera 
+    class="hidden-file-input" 
+    name="cameraFile" 
+    type="file" 
+    [multiple]="multiple"
+    (change)="onFileChanged($event)"
+    capture="environment"
+    accept="image/*" />
+
 </div>

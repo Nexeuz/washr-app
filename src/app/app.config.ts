@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 
 import { routes } from './features/dashboard/app.routes';
@@ -10,8 +10,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-// import { getFirestore, provideFirestore } from '@angular/fire/firestore'; // If you use Firestore
-// import { getStorage, provideStorage } from '@angular/fire/storage'; // If you use Storage
+ import { getStorage, provideStorage } from '@angular/fire/storage'; // If you use Storage
 
 const firebaseConfig = {
  apiKey: "AIzaSyAdR3pxo_MZg8CYNZab-aLmvNh2iUYeTXY",
@@ -39,7 +38,7 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
-    // provideStorage(() => getStorage())      // Uncomment if you use Firebase Storage
+    provideStorage(() => getStorage())      // Uncomment if you use Firebase Storage
   ]
 };
 

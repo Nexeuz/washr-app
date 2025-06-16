@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 
 
 // Shared Components
@@ -20,16 +21,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
 // Firestore
-import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, getDocs, collection, onSnapshot, FirestoreDataConverter, QueryDocumentSnapshot, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, collection, FirestoreDataConverter, QueryDocumentSnapshot, deleteDoc } from 'firebase/firestore';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { User } from '@angular/fire/auth';
+
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { ListItemComponent } from '../../../shared/components/list-item/list-item';
 import { AuthService } from '../../../core/services/auth';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
-import { MatDialog } from '@angular/material/dialog';
 
 // Typed Form Interface (No password fields)
 interface PersonalInfoForm {

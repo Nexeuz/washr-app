@@ -17,7 +17,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
 // Shared Components (ensure PageHeaderComponent is also not using Tailwind for its internal layout if this is a full switch)
 
-// Interfaces for data structures
 interface ServiceCard {
   id: string;
   imageUrl: string;
@@ -26,13 +25,6 @@ interface ServiceCard {
   buttonText: string;
   action?: () => void;
   route?: string;
-}
-
-interface BottomNavItem {
-  icon: string; // Material Icon name
-  label: string;
-  route: string;
-  isActive?: boolean;
 }
 
 @Component({
@@ -78,23 +70,12 @@ export class DashboardPageComponent implements OnInit {
     }
   ]);
 
-  bottomNavItems = signal<BottomNavItem[]>([
-    { icon: 'home', label: 'Home', route: '/dashboard', isActive: true },
-    { icon: 'directions_car', label: 'My Vehicles', route: '/vehicles/list' }, // Assuming this route exists
-    { icon: 'event_note', label: 'Scheduled', route: '/services/scheduled' }, // Assuming this route exists
-    { icon: 'person_outline', label: 'Profile', route: '/profile/personal-info' }
-  ]);
+
 
   constructor() {}
 
   ngOnInit(): void {
-    // Update active state of bottomNavItems based on current route
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.updateActiveNavItem();
-    });
-    this.updateActiveNavItem(); // Initial check
+  
   }
 
   handleCardAction(card: ServiceCard): void {
@@ -111,19 +92,7 @@ export class DashboardPageComponent implements OnInit {
     this.router.navigate(['/profile/settings']); // Example settings route
   }
 
-  onBottomNavItemClick(clickedItem: BottomNavItem): void {
-    this.router.navigate([clickedItem.route]);
-    // Active state will be updated by the router events subscription
-  }
 
-  private updateActiveNavItem(): void {
-    const currentRoute = this.router.url;
-    this.bottomNavItems.update(items =>
-      items.map(item => ({
-        ...item,
-        // A simple check, might need more sophisticated logic for child routes
-        isActive: currentRoute === item.route || (item.route !== '/dashboard' && currentRoute.startsWith(item.route))
-      }))
-    );
-  }
+
+  
 }

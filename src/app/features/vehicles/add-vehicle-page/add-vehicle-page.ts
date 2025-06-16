@@ -1,7 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+// =================================================================================
+// features/vehicles/add-vehicle-page/add-vehicle-page.component.ts
+// Path: src/app/features/vehicles/add-vehicle-page/add-vehicle-page.component.ts
+// =================================================================================
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, HostBinding, OnDestroy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Angular Material Modules
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,13 +13,25 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon'; // For potential icons within this page
+import { MatIconModule } from '@angular/material/icon';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { FileUploadPromptComponent } from '../../../shared/components/file-upload-prompt/file-upload-prompt';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 // Shared Components
 
-// Models or Services (Example)
+import { serverTimestamp, collection, addDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { Firestore } from '@angular/fire/firestore';
+import { getDownloadURL, ref, uploadBytes, Storage } from '@angular/fire/storage';
+import { AuthService } from '../../../core/services/auth';
+import { Subject, takeUntil } from 'rxjs';
+import { User, user } from '@angular/fire/auth';
+import { deleteObject } from 'firebase/storage';
+
+
+
+// Services
 // import { VehicleService } from '../../../core/services/vehicle.service';
 
 // Typed Form Interface
@@ -24,10 +40,9 @@ interface AddVehicleForm {
   vehicleName: FormControl<string | null>;
   licensePlate: FormControl<string | null>;
   isTaxi: FormControl<boolean | null>;
-  // vehiclePhotos: FormControl<FileList | null>; // If you want to manage files directly in the form
 }
 
-// Options for Vehicle Type Radio Group
+// Interface for Vehicle Type Radio Options
 interface VehicleTypeOption {
   value: string;
   viewValue: string;
@@ -37,122 +52,257 @@ interface VehicleTypeOption {
   selector: 'app-add-vehicle-page',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatRadioModule,
-    MatSlideToggleModule,
-    MatButtonModule,
-    MatIconModule,
-    PageHeaderComponent,      // Shared Page Header
-    FileUploadPromptComponent // Shared File Upload
+    CommonModule, ReactiveFormsModule, PageHeaderComponent, FileUploadPromptComponent,
+    MatFormFieldModule, MatInputModule, MatRadioModule, MatSlideToggleModule,
+    MatButtonModule, MatIconModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './add-vehicle-page.html',
   styleUrls: ['./add-vehicle-page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddVehiclePageComponent implements OnInit {
+export class AddVehiclePageComponent implements OnInit, OnDestroy {
+  @HostBinding('class.add-vehicle-page-host') hostClass = true;
+
   private fb = inject(FormBuilder);
+  private storage = inject(Storage);
+  private authService = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
+  private firestore = inject(Firestore);
   private router = inject(Router);
-  // private vehicleService = inject(VehicleService); // Example
+  private activatedRouter = inject(ActivatedRoute);
+
+
+  private destroy$ = new Subject<void>();
+
+  private userId: string | null = null; // To hold the user ID from the route parameters
+  private vehicleId: string | null = null; // To hold the vehicle ID from the route parameters
+
+
+
+
+  isSaving = signal(false); // To show a loading spinner on the save button
+  vehicleImageUrl = signal<string | null>(null); // To hold the URL of the uploaded vehicle image
+
+  // private vehicleService = inject(VehicleService);
 
   addVehicleForm!: FormGroup<AddVehicleForm>;
-  pageTitle = 'Add your vehicle'; // For the PageHeaderComponent
+  pageTitle = 'Agrega tu vehículo';
 
   vehicleTypeOptions: VehicleTypeOption[] = [
-    { value: 'motorcycle', viewValue: 'Motorcycle' },
-    { value: 'car', viewValue: 'Car' },
+    { value: 'motorcycle', viewValue: 'Motocicleta' },
+    { value: 'car', viewValue: 'Carro' },
   ];
 
-  // Signals to manage selected photos and their previews
-  selectedVehiclePhotos = signal<FileList | null>(null);
-  vehiclePhotoPreviews = signal<(string | ArrayBuffer | null)[]>([]);
+  selectedVehiclePhotos = signal<File[] | null>(null);
 
-  constructor() {
+  ngOnInit(): void {
+    debugger
     this.addVehicleForm = this.fb.group({
-      vehicleType: new FormControl('car', Validators.required), // Default to 'car'
+      vehicleType: new FormControl('', Validators.required),
       vehicleName: new FormControl('', Validators.required),
       licensePlate: new FormControl('', Validators.required),
-      isTaxi: new FormControl(false), // Default to false
-      // vehiclePhotos: new FormControl(null) // Not directly bound, handled by selectedVehiclePhotos signal
+      isTaxi: new FormControl(false),
+    });
+
+    this.addVehicleForm.get('vehicleType')?.valueChanges.subscribe({
+      next: (value) => {
+
+        if (value === 'motorcycle') {
+          this.addVehicleForm.get('isTaxi')?.disable();
+          this.addVehicleForm.get('isTaxi')?.setValue(false);
+        } else {
+          this.addVehicleForm.get('isTaxi')?.enable();
+
+        }
+      }
+    })
+
+    this.activatedRouter.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.userId = params.get('userId');
+      this.vehicleId = params.get('vehicleId');
+
+      if (this.userId && this.vehicleId) {
+        this.onLoadVehicleData(this.userId, this.vehicleId);
+      }
     });
   }
 
-  ngOnInit(): void {
-    // Initialization logic if any
+  ngOnDestroy(): void {
+    if (!this.destroy$.closed) {
+      this.destroy$.next();
+      this.destroy$.complete();
+    }
+
   }
 
-  onVehiclePhotosSelected(files: FileList): void {
-    this.selectedVehiclePhotos.set(files);
-    const previews: (string | ArrayBuffer | null)[] = [];
+  async onLoadVehicleData(userId: string, vehicleId: string): Promise<void> {
+    console.log(`Loading data for vehicle: ${vehicleId}`);
+    const vehicleDocRef = doc(this.firestore, `users/${userId}/vehicles/${vehicleId}`);
+    try {
+      const docSnap = await getDoc(vehicleDocRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        this.addVehicleForm.patchValue({
+          vehicleType: data['type'],
+          vehicleName: data['name'],
+          licensePlate: data['licensePlate'],
+          isTaxi: data['isTaxi'],
+        });
+        if (data['imageUrl']) {
+          this.vehicleImageUrl.set(data['imageUrl']);
+        }
+      } else {
+        console.error(`No vehicle found with ID: ${vehicleId}`);
+        this.snackBar.open('Vehículo no encontrado.', 'Cerrar', { duration: 3000 });
+        this.router.navigate(['/vehicles/list']);
+      }
+    } catch (error) {
+      console.error("Error loading vehicle data:", error);
+      this.snackBar.open('Error al cargar los datos del vehículo.', 'Cerrar', { duration: 3000 });
+    }
+  }
 
-    if (files && files.length > 0) {
-      const filesToPreviewArray = Array.from(files).slice(0, 5); // Limit previews for display
-      let filesProcessed = 0;
+  async onAddVehicle(): Promise<void> {
+    this.addVehicleForm.markAllAsTouched();
+    if (this.addVehicleForm.invalid || this.isSaving()) {
+      return;
+    }
 
-      if (filesToPreviewArray.length === 0) {
-        this.vehiclePhotoPreviews.set([]);
+    this.isSaving.set(true);
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.snackBar.open('Error: No has iniciado sesión.', 'Cerrar', { duration: 3000 });
+      this.isSaving.set(false);
+      return;
+    }
+
+    if (this.vehicleImageUrl() === null) {
+      if ((this.selectedVehiclePhotos() ?? []).length === 0) {
+        this.snackBar.open('Debes añadir una foto de tu vehículo', 'Ok', { duration: 3000 });
+        this.isSaving.set(false);
         return;
       }
+    }
 
-      for (const file of filesToPreviewArray) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          previews.push(reader.result);
-          filesProcessed++;
-          if (filesProcessed === filesToPreviewArray.length) {
-            this.vehiclePhotoPreviews.set([...previews]);
+    this.onAddVehicleFirestore(currentUser);
+
+  }
+
+  async onAddVehicleFirestore(currentUser: User): Promise<void> {
+    try {
+
+      // 2. Prepare data for Firestore
+      const formValue = this.addVehicleForm.getRawValue(); // Use getRawValue to include disabled fields
+      const vehicleData = {
+        name: formValue.vehicleName,
+        licensePlate: formValue.licensePlate,
+        type: formValue.vehicleType,
+        isTaxi: formValue.isTaxi,
+        imageUrl: this.vehicleImageUrl() || null, // Initialize imageUrl as null
+        createdAt: serverTimestamp(),
+        ownerId: currentUser.uid,
+      };
+      // 3. Save vehicle data to Firestore
+
+      if (this.vehicleId && this.vehicleId !== null && this.userId !== '' && this.userId !== null) {
+        // If vehicleId is present, update the existing vehicle
+        const vehicleDocRef = doc(this.firestore, `users/${currentUser.uid}/vehicles/${this.vehicleId}`);
+
+     if (this.vehicleImageUrl()) {
+        console.log(`Deleting old photo from storage: ${this.vehicleImageUrl()}`);
+        try {
+          const oldImageRef = ref(this.storage, this.vehicleImageUrl()!);
+          await deleteObject(oldImageRef);
+          console.log('Old photo deleted successfully.');
+
+        } catch (error) {
+          // Log error but don't block the update if deletion fails (e.g., file already gone)
+          console.error("Could not delete old photo, it might already be gone:", error);
+        }
+
+
+          if (this.selectedVehiclePhotos()?.length === 1) {
+            const photoUrl = await this.uploadVehiclePhotos(currentUser.uid, this.vehicleId);
+
+            await updateDoc(vehicleDocRef, {
+              ...vehicleData,
+              imageUrl: photoUrl[0]
+            });
+
+
           }
-        };
-        reader.readAsDataURL(file);
+        } else {
+            const vehicleDocRef = doc(this.firestore, `users/${currentUser.uid}/vehicles/${this.vehicleId}`);
+            await updateDoc(vehicleDocRef, {
+              ...vehicleData
+            });
+        
+        }
+
+      } else {
+        const vehiclesColRef = collection(this.firestore, `users/${currentUser.uid}/vehicles`);
+        const newDocRef = await addDoc(vehiclesColRef, vehicleData);
+
+        console.log('Vehículo agregado con ID:', newDocRef.id);
+        // 3. If there's a photo, upload it and update the document with the URL
+        if (this.vehicleImageUrl() === null) {
+          if (this.selectedVehiclePhotos()) {
+            const photoUrl = await this.uploadVehiclePhotos(currentUser.uid, newDocRef.id);
+
+            // 4. Update the newly created document with the photo URL
+            const vehicleDocRef = doc(this.firestore, `users/${currentUser.uid}/vehicles/${newDocRef.id}`);
+            await updateDoc(vehicleDocRef, {
+              imageUrl: photoUrl
+            });
+            console.log('Documento del vehículo actualizado con la URL de la foto.');
+          }
+        }
       }
-      console.log(`${files.length} vehicle photo(s) selected.`);
-    } else {
-      this.vehiclePhotoPreviews.set([]);
+
+      this.snackBar.open('¡Vehículo agregado exitosamente!', 'Cerrar', { duration: 3000 });
+      this.router.navigate(['list'], {relativeTo: this.activatedRouter}); // Go back to the previous page
+
+
+    } catch (error) {
+      console.error('Error al agregar el vehículo:', error);
+      this.snackBar.open('Error al agregar el vehículo. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
+    } finally {
+      this.isSaving.set(false); // Stop loading spinner
     }
   }
 
-  onAddVehicle(): void {
-    this.addVehicleForm.markAllAsTouched(); // Ensure validation messages appear if form is invalid
-    if (this.addVehicleForm.valid) {
-      const formValue = this.addVehicleForm.value;
-      const photosToUpload = this.selectedVehiclePhotos();
-
-      console.log('Adding Vehicle Form Data:', formValue);
-      if (photosToUpload && photosToUpload.length > 0) {
-        console.log(`With ${photosToUpload.length} photo(s):`);
-        Array.from(photosToUpload).forEach(file => console.log(`  - ${file.name}`));
-      } else {
-        console.log('No photos selected.');
-      }
-
-      // Example: Construct FormData for submission if including files
-      // const formData = new FormData();
-      // formData.append('vehicleType', formValue.vehicleType || '');
-      // formData.append('vehicleName', formValue.vehicleName || '');
-      // // ... append other form fields ...
-      // if (photosToUpload) {
-      //   for (let i = 0; i < photosToUpload.length; i++) {
-      //     formData.append('photos', photosToUpload[i], photosToUpload[i].name);
-      //   }
-      // }
-      // this.vehicleService.addVehicle(formData).subscribe(...)
-
-      this.onDone(); // Navigate after "successful" submission for demo
-    } else {
-      console.log('Add Vehicle Form is invalid. Please check the fields.');
+  private async uploadVehiclePhotos(userId: string, vehicleId: string): Promise<string[]> {
+    const photos = this.selectedVehiclePhotos();
+    if (!photos || photos.length === 0) {
+      return []; // No photos to upload
     }
+
+    const downloadUrls: string[] = [];
+    const filesToUpload = Array.from(photos);
+
+    for (const file of filesToUpload) {
+      const filePath = `vehicle_photos/${userId}/vehicles/${vehicleId}${Date.now()}_${file.name}`;
+      const storageRef = ref(this.storage, filePath);
+
+      console.log(`Uploading ${file.name} to ${filePath}...`);
+      const uploadResult = await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(uploadResult.ref);
+      downloadUrls.push(downloadUrl);
+      console.log(`Successfully uploaded ${file.name}. URL: ${downloadUrl}`);
+    }
+
+    return downloadUrls;
   }
 
   onDone(): void {
-    // Navigate to a relevant page, e.g., vehicle list or user profile
-    console.log('Done button clicked - navigating away.');
-    this.router.navigate(['/profile/personal-info']); // Example navigation
+    console.log('Botón "Hecho" presionado - navegando a otra página.');
+    this.router.navigate(['/dashboard']); // Navigate to dashboard or a "My Vehicles" list page
   }
 
   handleHeaderBackClick(): void {
-    // Navigate to a previous relevant page, perhaps user profile or a vehicle list
-    this.router.navigate(['/profile/personal-info']); // Example
+    this.router.navigate(['list'], {relativeTo: this.activatedRouter}); // Go back to the previous page
   }
 }

@@ -1,0 +1,169 @@
+:host(.add-vehicle-page-host) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: white; // From original HTML
+}
+
+.mat-error-like-text {
+  color: #d32f2f; // Error color
+  font-size: 0.875rem; // text-sm
+  font-weight: 400; // font-normal
+  line-height: 1.25; // leading-5
+}
+
+.add-vehicle-page-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between; // Push footer to the bottom
+}
+
+.content-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0 1rem; // px-4
+}
+
+.form-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.form-section-title {
+  font-family: "Space Grotesk", sans-serif;
+  color: #141414;
+  font-size: 1.125rem; // text-lg
+  font-weight: 700; // font-bold
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  padding-top: 1rem;    // pt-4
+  padding-bottom: 0.5rem; // pb-2
+}
+
+.form-field-group {
+  padding-top: 0.75rem; // py-3
+  padding-bottom: 0.75rem;
+}
+
+.radio-group-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem; // gap-3
+  padding-top: 1rem; // p-4 top/bottom padding
+  padding-bottom: 1rem;
+}
+
+.custom-radio-button {
+  // Styles to mimic the original chip-like radio buttons
+  // mat-radio-button internal structure is complex to style perfectly like a chip.
+  // This will style the text, but the radio button itself remains.
+  // Using MatChipList would be better for a true chip appearance.
+}
+
+.form-field.full-width {
+  width: 100%;
+}
+
+.toggle-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3.5rem; // min-h-14
+  padding: 0.5rem 0; // py-2
+}
+
+.toggle-label {
+  color: #141414;
+  font-size: 1rem; // text-base
+  font-weight: 400; // font-normal
+  line-height: 1.5; // leading-normal
+  flex-grow: 1;
+}
+
+.photo-title {
+  padding-top: 1rem; // pt-4
+  padding-bottom: 0.5rem; // pb-2
+}
+
+.photo-upload-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0; // p-4 on original container
+}
+
+.photo-previews-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem; // gap-2
+  margin-bottom: 1rem; // mb-4
+  padding: 0.5rem;
+  border: 2px dashed #e0e0e0;
+  border-radius: 0.75rem;
+}
+
+.photo-preview-image {
+  height: 5rem; // h-20
+  width: 5rem;  // w-20
+  object-fit: cover;
+  border-radius: 0.25rem; // rounded
+  border: 1px solid #e5e7eb; // border-neutral-200
+}
+
+.photo-preview-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5rem;
+  width: 5rem;
+  background-color: #f2f2f2;
+  border-radius: 0.25rem;
+  border: 1px solid #e5e7eb;
+  color: #757575;
+  font-size: 0.875rem; // text-sm
+}
+
+.footer-actions-container {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  border-top: 1px solid #ededed;
+  padding: 0.5rem 0 0.75rem 0; // py-2 top, pb-3 bottom
+  margin-top: auto; // Push to bottom if content is short
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.footer-actions-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem; // py-3 px-4
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; // gap-3
+}
+
+.action-button {
+  width: 100%;
+  height: 3rem !important; // !h-12
+  border-radius: 9999px !important; // rounded-full
+  text-transform: none !important;
+  font-weight: 700; // font-bold
+  font-size: 1rem; // text-base
+}
+
+// Global button overrides in styles.scss should handle colors
+// e.g., .confirm-button should map to .login-button style (primary color)
+.confirm-button { /* Use color="primary" */ }
+
+// Specific styles for the "Done" button
+.done-button {
+  // Use mat-stroked-button and apply light gray background
+  // Example for a filled light gray button:
+  --mdc-text-button-label-text-color: #141414;
+  --mdc-text-button-container-color: #f2f2f2;
+  &:hover {
+    --mdc-text-button-container-color: #e0e0e0;
+  }
+}

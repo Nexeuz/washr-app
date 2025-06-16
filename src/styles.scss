@@ -47,6 +47,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 p, li, div { // Apply to common text-container elements
+
+   font-family: '"Space Grotesk", sans-serif'; // Set your brand/headline font
+  // Optionally set default weights or margins
+  font-weight: 400; // Example default weight for headlines
   // font-family: '"Noto Sans", sans-serif'; // Already on body, but can be explicit
   // color: var(--mdc-theme-on-surface-variant); // Example for slightly less prominent text
 }

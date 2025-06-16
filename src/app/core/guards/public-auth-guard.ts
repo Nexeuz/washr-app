@@ -16,10 +16,10 @@ export const publicAuthGuard: CanActivateFn = (route, state): Observable<boolean
       if (isAuthenticated) {
         // User is logged in, redirect them away from auth pages
         console.log('PublicAuthGuard: User is already authenticated, redirecting to dashboard.');
-        return router.createUrlTree([defaultAuthenticatedRoute]);
+        return true;
       } else {
         // User is not logged in, allow access to the auth page
-        return true;
+        return false;
       }
     })
   );

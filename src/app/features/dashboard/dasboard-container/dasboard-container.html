@@ -1,0 +1,29 @@
+<div class="dashboard-container">
+  <app-page-header title="Página principal" [showBackButton]="false" [showActionsSlot]="true">
+    <ng-container page-header-actions>
+
+    </ng-container>
+  </app-page-header>
+
+  <main class="dashboard-content">
+  
+    <router-outlet></router-outlet>
+  </main>
+
+  <mat-toolbar class="bottom-nav-toolbar">
+    <div class="bottom-nav-inner-container">
+      @for (item of bottomNavItems(); track item.route) {
+        <button
+          mat-icon-button
+          class="bottom-nav-item"
+          [class.active-nav-item]="item.isActive"
+          (click)="onBottomNavItemClick(item)"
+          [attr.aria-label]="item.label"
+          matRipple [matRippleUnbounded]="false">
+          <mat-icon class="bottom-nav-icon">{{ item.icon }}</mat-icon>
+          <span class="bottom-nav-label">{{ item.label }}</span>
+        </button>
+      }
+    </div>
+  </mat-toolbar>
+  <div class="bottom-nav-spacer"></div> </div>
