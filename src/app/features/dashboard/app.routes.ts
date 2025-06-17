@@ -1,7 +1,7 @@
 // Path: src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guards/auth-guard';
-import { profileCompleteDasboard as profileCompleteAuthAllowGuard, profileCompleteGuardAuth, profileCompleteGuardProfile } from '../../core/guards/profile-complete-guard';
+import { profileCompletedashboard as profileCompleteAuthAllowGuard, profileCompleteGuardAuth, profileCompleteGuardProfile } from '../../core/guards/profile-complete-guard';
 
 export const routes: Routes = [
   // Authentication Feature Routes
@@ -96,12 +96,12 @@ export const routes: Routes = [
   },
 
   {
-    path: 'dasboard',
+    path: 'dashboard',
     canActivate: [profileCompleteAuthAllowGuard],
-    loadComponent: () => import('../dashboard/dasboard-container/dasboard-container').then(m => m.DasboardContainer),
+    loadComponent: () => import('../dashboard/dashboard-container/dashboard-container').then(m => m.DashboardContainer),
     children: [
       {
-        path: '', // Default child route for dashboard
+        path: 'home', // Default child route for dashboard
         loadComponent: () => import('../dashboard/dashboard-page/dashboard-page').then(m => m.DashboardPageComponent),
       },
       {
@@ -118,7 +118,7 @@ export const routes: Routes = [
             title: 'List Vehicles - Washr App',
           },
           {
-            path: 'add',
+            path: 'add/new',
             loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
             title: 'Add Vehicle - Washr App',
           },
@@ -132,6 +132,10 @@ export const routes: Routes = [
             redirectTo: 'list', // Redirect to the vehicle list if no specific route matches
           }
         ]
+      },
+      {
+        path: '**',
+        redirectTo: 'home', // Redirect to home if no specific route matches
       }
     ]
   },

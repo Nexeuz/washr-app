@@ -1,28 +1,27 @@
-
 <div class="profile-page-container">
   @if (isLoading()) {
     <div class="loading-container">
       <p>Cargando perfil...</p>
     </div>
   } @else {
-    <!-- User Profile Section -->
-    <div class="profile-header">
-      <div class="profile-avatar">
-        <img [src]="userProfile().photoUrl" [alt]="userProfile().name" class="avatar-image">
+    <!-- Encabezado del perfil -->
+    <header class="profile-header">
+      <div class="avatar-wrapper">
+        <img [src]="userProfile().photoUrl" [alt]="userProfile().photoUrl" class="avatar-image" />
       </div>
-      <h2 class="profile-name">{{ userProfile().name }}</h2>
-    </div>
+      <h2 class="profile-name">{{ userProfile().displayName }}</h2>
+    </header>
 
-    <!-- Loyalty Program Section -->
-    <div class="section">
+    <!-- Sección Programa de Lealtad -->
+    <section class="section">
       <h3 class="section-title">Programa de Lealtad</h3>
       <mat-card class="loyalty-card">
         <mat-card-content>
-          <div class="stamps-info">
-            <p class="stamps-text">Sellos: {{ washProgress().current }}/{{ washProgress().total }}</p>
-          </div>
+          <p class="stamps-text">Sellos: {{ washProgress().current }}/{{ washProgress().total }}</p>
           <div class="progress-section">
-            <p class="progress-text">{{ washProgress().current }}/{{ washProgress().total }} lavados para obtener un lavado gratis</p>
+            <p class="progress-text">
+              {{ washProgress().current }}/{{ washProgress().total }} lavados para obtener un lavado gratis
+            </p>
             <mat-progress-bar 
               mode="determinate" 
               [value]="washProgress().percentage"
@@ -31,29 +30,25 @@
           </div>
         </mat-card-content>
       </mat-card>
-    </div>
+    </section>
 
-    <!-- Rain Insurance Section -->
-    <div class="section">
+    <!-- Sección Seguro de Lluvia -->
+    <section class="section">
       <h3 class="section-title">Seguro de Lluvia 24 Horas</h3>
       <mat-list>
         <mat-list-item class="insurance-item">
           <div matListItemTitle>
-            @if (rainInsurance().active) {
-              Activo: {{ rainInsurance().hoursRemaining }} horas restantes
-            } @else {
-              Inactivo
-            }
+            {{ rainInsurance().active ? 'Activo: ' + rainInsurance().hoursRemaining + ' horas restantes' : 'Inactivo' }}
           </div>
           <div matListItemMeta>
             <mat-icon>info</mat-icon>
           </div>
         </mat-list-item>
       </mat-list>
-    </div>
+    </section>
 
-    <!-- Vehicles Section -->
-    <div class="section">
+    <!-- Sección Vehículos -->
+    <section class="section">
       <h3 class="section-title">Vehículos</h3>
       <mat-list>
         @if (vehicles().length > 0) {
@@ -72,33 +67,30 @@
         } @else {
           <mat-list-item>
             <div matListItemTitle>No hay vehículos registrados</div>
-            <div matListItemMeta>
-              <mat-icon>arrow_forward_ios</mat-icon>
-            </div>
           </mat-list-item>
         }
       </mat-list>
-    </div>
+    </section>
 
-    <!-- Booking History Section -->
-    <div class="section">
+    <!-- Historial de Reservas -->
+    <section class="section">
       <h3 class="section-title">Historial de Reservas</h3>
       <mat-list>
         <mat-list-item class="clickable-item" (click)="onBookingHistoryClick()">
-          <div matListItemTitle>Ver Historial de Reservas</div>
+          <div matListItemTitle>Ver historial de reservas</div>
           <div matListItemMeta>
             <mat-icon>arrow_forward_ios</mat-icon>
           </div>
         </mat-list-item>
       </mat-list>
-    </div>
+    </section>
 
-    <!-- Personal Details Section -->
-    <div class="section">
+    <!-- Datos Personales -->
+    <section class="section">
       <h3 class="section-title">Datos Personales</h3>
       <mat-list>
         <mat-list-item>
-          <div matListItemTitle>Nombre: {{ userProfile().name }}</div>
+          <div matListItemTitle>Nombre: {{ userProfile().displayName }}</div>
         </mat-list-item>
         <mat-list-item>
           <div matListItemTitle>Correo: {{ userProfile().email }}</div>
@@ -110,10 +102,10 @@
           </div>
         </mat-list-item>
       </mat-list>
-    </div>
+    </section>
 
-    <!-- Settings Section -->
-    <div class="section">
+    <!-- Configuración -->
+    <section class="section">
       <h3 class="section-title">Configuración</h3>
       <mat-list>
         <mat-list-item class="clickable-item" (click)="onHelpSupportClick()">
@@ -123,7 +115,6 @@
           </div>
         </mat-list-item>
       </mat-list>
-    </div>
+    </section>
   }
 </div>
-

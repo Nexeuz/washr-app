@@ -10,7 +10,7 @@ import { Firestore } from '@angular/fire/firestore';
 
 
     const profileCompletionRoute = '/profile/personal-info'; // Where to redirect if profile is incomplete
-  const dasboardUrl = '/dasboard';
+  const dashboardUrl = '/dashboard';
 
 export const profileCompleteGuardAuth: CanActivateFn = (route, state): Observable<boolean | UrlTree> => {
 
@@ -35,7 +35,7 @@ export const profileCompleteGuardAuth: CanActivateFn = (route, state): Observabl
         map(docSnap => {
           if (docSnap.exists() && docSnap.data()?.['isRegistrationComplete'] === true) {
             console.log('ProfileCompleteGuard: Registration complete, access granted.');
-            return router.createUrlTree([dasboardUrl]); // Profile is complete, allow access
+            return router.createUrlTree([dashboardUrl]); // Profile is complete, allow access
           } else {
             console.log('ProfileCompleteGuard: Registration incomplete or document missing, redirecting to complete profile.');
             // Profile is not complete or document doesn't exist, redirect
@@ -75,7 +75,7 @@ export const profileCompleteGuardProfile: CanActivateFn = (route, state): Observ
         map(docSnap => {
           if (docSnap.exists() && docSnap.data()?.['isRegistrationComplete'] === true) {
             console.log('ProfileCompleteGuard: Registration complete, access granted.');
-            return router.createUrlTree([dasboardUrl]); // Profile is complete, allow access
+            return router.createUrlTree([dashboardUrl]); // Profile is complete, allow access
           } else {
             console.log('ProfileCompleteGuard: Registration incomplete or document missing, redirecting to complete profile.');
             // Profile is not complete or document doesn't exist, redirect
@@ -93,7 +93,7 @@ export const profileCompleteGuardProfile: CanActivateFn = (route, state): Observ
 };
 
 
-export const profileCompleteDasboard: CanActivateFn = (route, state): Observable<boolean | UrlTree > => {
+export const profileCompletedashboard: CanActivateFn = (route, state): Observable<boolean | UrlTree > => {
 
   const authService = inject(AuthService);
   const firestore = inject(Firestore);

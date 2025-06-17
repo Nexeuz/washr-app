@@ -1,5 +1,5 @@
 <div class="dashboard-container">
-  <app-page-header [title]="title()" [showBackButton]="false" [showActionsSlot]="true">
+  <app-page-header [title]="title()" (backButtonClick)="backOnClick()" [showBackButton]="isChildRoute()" [showActionsSlot]="true">
     <ng-container page-header-actions>
 
     </ng-container>
@@ -14,16 +14,20 @@
     <div class="bottom-nav-inner-container">
       @for (item of bottomNavItems(); track item.route) {
         <button
-          mat-icon-button
+          matIconButton
           class="bottom-nav-item"
-          [class.active-nav-item]="item.isActive"
+          [class.active-nav-item]="rla.isActive"
           (click)="onBottomNavItemClick(item)"
+          [routerLink]="item.route"
+            routerLinkActive #rla="routerLinkActive"
           [attr.aria-label]="item.label"
           matRipple [matRippleUnbounded]="false">
           <mat-icon class="bottom-nav-icon">{{ item.icon }}</mat-icon>
-          <span class="bottom-nav-label">{{ item.label }}</span>
+          <span [innerHTML]="item.label" class="bottom-nav-label"></span>
         </button>
+
       }
     </div>
+    
   </mat-toolbar>
   <div class="bottom-nav-spacer"></div> </div>

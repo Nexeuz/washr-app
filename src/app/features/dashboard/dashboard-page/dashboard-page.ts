@@ -49,6 +49,7 @@ export class DashboardPageComponent implements OnInit {
 
   private router = inject(Router);
   titleService = inject(TitleService); // Signal to hold breadcrumb data
+  
 
 
   userName = signal("Alex"); // Example user name, fetch from AuthService or a user service
@@ -77,7 +78,7 @@ export class DashboardPageComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-        this.titleService.setTitle('Página principal'); // Set the page title
+        this.titleService.setTitle('Inicio'); // Set the page title
   
   }
 

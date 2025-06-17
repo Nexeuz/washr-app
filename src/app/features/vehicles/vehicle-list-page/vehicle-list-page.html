@@ -52,15 +52,16 @@
         </button>
       </div>
       }
-    </div>
-        @if (router.url.includes('/dasboard')) {
-          @if (vehicles().length > 0) {
+
+              @if (router.url.includes('/dashboard') && vehicles().length > 0) {
 
     <button matButton="filled" (click)="onAddVehicle()" class="action-button add-vehicle-button">
       Agregar Vehículo
     </button>
-  }
+  
       }
+    </div>
+
 
   </main>
   

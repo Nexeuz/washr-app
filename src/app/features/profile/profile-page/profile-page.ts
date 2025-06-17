@@ -7,16 +7,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
-import { FirestoreService, Vehicle, WashProgress } from '../../../core/services/firestore';
+import { FirestoreService} from '../../../core/services/firestore';
 import { AuthService } from '../../../core/services/auth';
 import { TitleService } from '../../../core/services/title';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header";
+import { WashProgress } from '../../../core/model/whash-type';
+import { Vehicle } from '../../../core/model/vehicle';
+import { UserData } from '../../../core/model/user-data';
 
-interface UserProfile {
-  name: string;
-  email: string;
-  phone: string;
-  photoUrl?: string;
-}
 
 @Component({
   selector: 'app-profile-page',
@@ -29,8 +28,9 @@ interface UserProfile {
     MatProgressBarModule,
     MatListModule,
     MatDividerModule,
-
-  ],
+    MatProgressSpinnerModule,
+    PageHeaderComponent
+],
   templateUrl: './profile-page.html',
   styleUrls: ['./profile-page.scss']
 })
@@ -40,8 +40,8 @@ export class ProfilePageComponent implements OnInit {
   private firestoreService = inject(FirestoreService);
   private authService = inject(AuthService);
 
-  userProfile = signal<UserProfile>({
-    name: 'Olivia Bennett',
+  userProfile = signal({
+    displayName: 'Olivia Bennett',
     email: 'olivia.bennett@example.com',
     phone: '(555) 123-4567',
     photoUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDyP74fhkzrMyod5BjQwo1x1B3PkRiDd5Vy7D6Pq39-BQeoLCxhTIepOhQvszvqO1tMTMv6CNP-sXgb6gMVuwyJDHswO0y3fFIedZS8i9NecDN_vg1CE51_YPA14blsaphkeDE16UJDLNLd1S-tXIFuojHkjoLSgDWzjqr1G0w-6WmOWDlLaqfsE61OSfBEEHuK2Ss35DgGfNWntB-nfgouboY2x-3iD3PgMEKfhICRqRDz9f8MxUOvxZvUKA-C1bIk6Nua8fj8rg'
@@ -83,14 +83,14 @@ export class ProfilePageComponent implements OnInit {
       next: (userData) => {
         if (userData) {
           this.userProfile.set({
-            name: userData.name,
-            email: userData.email,
-            phone: userData.phone,
-            photoUrl: userData.photoUrl
+            displayName: userData.displayName || 'Usuario Anónimo',
+            email: userData.email || 'No email provided',
+            phone: userData.phone || 'No phone number provided',
+            photoUrl: userData.photoUrl || 'https://via.placeholder.com/150'
           });
 
           this.rainInsurance.set({
-            active: userData.hasActiveRainInsurance,
+            active: userData.hasActiveRainInsurance || false,
             hoursRemaining: userData.rainInsuranceExpiresAt 
               ? this.firestoreService.getRainInsuranceRemainingHours(userData.rainInsuranceExpiresAt)
               : 0
@@ -127,7 +127,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   onVehiclesClick(): void {
-    this.router.navigate(['/dasboard/vehicles/list']);
+    this.router.navigate(['/dashboard/vehicles/list']);
   }
 
   onBookingHistoryClick(): void {
@@ -136,7 +136,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   onPersonalDetailsClick(): void {
-    this.router.navigate(['/profile/personal-info']);
+   // this.router.navigate(['/profile/personal-info']);
   }
 
   onHelpSupportClick(): void {
@@ -145,7 +145,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/dasboard']);
+    this.router.navigate(['/dashboard']);
   }
 }
 

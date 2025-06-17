@@ -229,7 +229,7 @@ export class PersonalInfoPageComponent implements OnInit {
           console.log(`PersonalInfoPage: Profile for user ${currentUser.uid} exists but is incomplete.`);
         } else {
           this.isProfileCompletionMode.set(false);
-          this.router.navigateByUrl('/dasboard')
+          this.router.navigateByUrl('/dashboard')
           console.log(`PersonalInfoPage: Profile for user ${currentUser.uid} is complete. Editing mode.`);
         }
       }
@@ -312,7 +312,7 @@ export class PersonalInfoPageComponent implements OnInit {
   }
 
 
-  async onSaveFirestore(onNavigateDasboard = false, isProfileCompletionMode = false): Promise<void> {
+  async onSaveFirestore(onNavigatedashboard = false, isProfileCompletionMode = false): Promise<void> {
     const formData = this.personalInfoForm.getRawValue(); // Use getRawValue for all fields, including disabled email
 
     this.checkLoginStatus();
@@ -341,7 +341,7 @@ export class PersonalInfoPageComponent implements OnInit {
 
 
 
-      if (onNavigateDasboard) {
+      if (onNavigatedashboard) {
         console.log('Profile data saved to Firestore:', profileDataToUpdate);
         this.router.navigate(['/dashboard']);
       }

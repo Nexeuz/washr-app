@@ -1,44 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import {  collection, doc, getDoc, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import {  collection, doc, getDoc, getDocs, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { Observable, from, map, catchError, of, firstValueFrom, switchMap, forkJoin } from 'rxjs';
+import { UserData } from '../model/user-data';
+import { Vehicle } from '../model/vehicle';
+import { WashProgress, WashRecord } from '../model/whash-type';
 
-export interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  photoUrl?: string;
-  hasActiveRainInsurance: boolean;
-  rainInsuranceExpiresAt?: Date;
-}
 
-export interface Vehicle {
-  id: string;
-  userId: string;
-  name: string;
-  licensePlate: string;
-  type: string;
-  imageUrl?: string;
-  isTaxi: boolean;
-  createdAt: Date;
-}
 
-export interface WashRecord {
-  id: string;
-  userId: string;
-  vehicleId: string;
-  washDate: Date;
-  washType: string;
-  status: 'completed' | 'pending' | 'cancelled';
-  location: string;
-}
 
-export interface WashProgress {
-  current: number;
-  total: number;
-  percentage: number;
-}
+
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -47,24 +20,33 @@ export class FirestoreService {
   private firestore = inject(Firestore);
 
   // Get user data by user ID
-  getUserData(userId: string): Observable<UserData | null> {
+  getUserData(userId: string): Observable< UserData | null> {
     const userDocRef = doc(this.firestore, 'users', userId);
+
     
     return from(getDoc(userDocRef)).pipe(
       map(docSnap => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           return {
-            id: docSnap.id,
-            name: data['name'] || '',
+            uid: docSnap.id,
+            displayName: data['displayName'] || '',
             email: data['email'] || '',
-            phone: data['phone'] || '',
-            photoUrl: data['photoUrl'],
+            photoURL: data['photoUrl'],
+            phone: data['phone'] || null,
+            authProviders: data['authProviders'] || [],
+            isRegistrationComplete: data['isRegistrationComplete'] || false,
+            createdAt: data['createdAt']?.toDate() || new Date(),
+            updatedAt: data['updatedAt']?.toDate() || new Date(),
+            dateOfBirth: data['dateOfBirth'] ? data['dateOfBirth'] : null,
+            gender: data['gender'] ?? null,
             hasActiveRainInsurance: this.checkActiveRainInsurance(data['rainInsuranceExpiresAt']),
             rainInsuranceExpiresAt: data['rainInsuranceExpiresAt']?.toDate()
           } as UserData;
+        } else {
+                  return null;
+
         }
-        return null;
       }),
       catchError(error => {
         console.error('Error getting user data:', error);

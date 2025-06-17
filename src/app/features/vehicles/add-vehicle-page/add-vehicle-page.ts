@@ -304,7 +304,4 @@ export class AddVehiclePageComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard']); // Navigate to dashboard or a "My Vehicles" list page
   }
 
-  handleHeaderBackClick(): void {
-    this.router.navigate(['list'], {relativeTo: this.activatedRouter}); // Go back to the previous page
-  }
 }

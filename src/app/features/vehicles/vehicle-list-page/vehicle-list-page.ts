@@ -127,7 +127,7 @@ export class VehicleListPageComponent implements OnInit, OnDestroy {
   }
 
 async onAddVehicle(): Promise<void> {
-    await this.router.navigate(['../add'], { relativeTo: this.activeRoute })
+    await this.router.navigate(['../add/new'], { relativeTo: this.activeRoute })
 }
 
   onEditVehicle(vehicleId: string): void {
