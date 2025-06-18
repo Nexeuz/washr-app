@@ -1,51 +1,51 @@
-<app-page-header title="Create Account" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
+<app-page-header title="Crear cuenta" [showBackButton]="true" (backButtonClick)="goBack()"></app-page-header>
 
 <div class="sign-up-email-page-container">
   <div class="sign-up-content-wrapper">
     <h2 class="page-subtitle">
-      Create your Washr account
+      Crea tu cuenta de Servicentro HM
     </h2>
 
     <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()" class="sign-up-form">
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Full Name</mat-label>
-        <input matInput formControlName="displayName" placeholder="Enter your full name">
+        <mat-label>Nombre completo</mat-label>
+        <input matInput formControlName="displayName" placeholder="Ingresa tu nombre completo">
 
         @if (signUpForm.get('displayName')?.hasError('required') && signUpForm.get('displayName')?.touched) {
-            <mat-error>Full Name is required.</mat-error>
-          }      
+            <mat-error>El nombre completo es obligatorio.</mat-error>
+        }      
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email" placeholder="Enter your email" required>
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="Ingresa tu correo electrónico" required>
         @if (signUpForm.get('email')?.hasError('required') && signUpForm.get('email')?.touched) {
-          <mat-error>Email is required.</mat-error>
+          <mat-error>El correo electrónico es obligatorio.</mat-error>
         }
         @if (signUpForm.get('email')?.hasError('email') && signUpForm.get('email')?.touched) {
-          <mat-error>Please enter a valid email address.</mat-error>
+          <mat-error>Por favor ingresa un correo electrónico válido.</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Password</mat-label>
-        <input matInput formControlName="password" type="password" placeholder="Choose a password (min. 8 characters)" required>
+        <mat-label>Contraseña</mat-label>
+        <input matInput formControlName="password" type="password" placeholder="Elige una contraseña (mín. 8 caracteres)" required>
         @if (signUpForm.get('password')?.hasError('required') && signUpForm.get('password')?.touched) {
-          <mat-error>Password is required.</mat-error>
+          <mat-error>La contraseña es obligatoria.</mat-error>
         }
         @if (signUpForm.get('password')?.hasError('minlength') && signUpForm.get('password')?.touched) {
-          <mat-error>Password must be at least 8 characters.</mat-error>
+          <mat-error>La contraseña debe tener al menos 8 caracteres.</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Confirm Password</mat-label>
-        <input matInput formControlName="confirmPassword" type="password" placeholder="Repeat your password" required>
+        <mat-label>Confirmar contraseña</mat-label>
+        <input matInput formControlName="confirmPassword" type="password" placeholder="Repite tu contraseña" required>
         @if (signUpForm.get('confirmPassword')?.hasError('required') && signUpForm.get('confirmPassword')?.touched) {
-          <mat-error>Please confirm your password.</mat-error>
+          <mat-error>Por favor confirma tu contraseña.</mat-error>
         }
         @if (signUpForm.hasError('passwordsNotMatching') && signUpForm.get('confirmPassword')?.touched && !signUpForm.get('confirmPassword')?.hasError('required')) {
-          <mat-error>Passwords do not match.</mat-error>
+          <mat-error>Las contraseñas no coinciden.</mat-error>
         }
       </mat-form-field>
 
@@ -54,14 +54,14 @@
       }
 
       <button matButton="filled" color="secondary" type="submit" class="action-button sign-up-button full-width" [disabled]="signUpForm.invalid">
-        Create Account
+        Crear cuenta
       </button>
     </form>
 
     <p class="footer-text">
-      Already have an account?
+      ¿Ya tienes una cuenta?
       <a routerLink="/auth/login" class="footer-link">
-        Log in
+        Iniciar sesión
       </a>
     </p>
   </div>

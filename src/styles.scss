@@ -40,7 +40,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: '"Space Grotesk", sans-serif'; // Set your brand/headline font
+  font-family: var(--mat-sys-title-large-font); // Set your brand/headline font
   // Optionally set default weights or margins
   font-weight: 500; // Example default weight for headlines
   // color: var(--mdc-theme-on-surface); // Use Material's text color variable
@@ -48,7 +48,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p, li, div { // Apply to common text-container elements
 
-   font-family: '"Space Grotesk", sans-serif'; // Set your brand/headline font
+   font-family: var(--mat-sys-body-large-font); // Set your brand/headline font
   // Optionally set default weights or margins
   font-weight: 400; // Example default weight for headlines
   // font-family: '"Noto Sans", sans-serif'; // Already on body, but can be explicit

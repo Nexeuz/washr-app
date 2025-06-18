@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
-import { FirestoreService} from '../../../core/services/firestore';
+import { FirestoreService } from '../../../core/services/firestore';
 import { AuthService } from '../../../core/services/auth';
 import { TitleService } from '../../../core/services/title';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -15,6 +15,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 import { WashProgress } from '../../../core/model/whash-type';
 import { Vehicle } from '../../../core/model/vehicle';
 import { UserData } from '../../../core/model/user-data';
+import { ProfilePhoneNumberSheetComponent } from '../profile-phone-number-sheet/profile-phone-number-sheet';
+import { MatDialog } from '@angular/material/dialog';
+import { Firestore, updateDoc } from '@angular/fire/firestore';
+import { doc } from 'firebase/firestore';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -29,16 +35,19 @@ import { UserData } from '../../../core/model/user-data';
     MatListModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    PageHeaderComponent
-],
+    MatBottomSheetModule
+  ],
   templateUrl: './profile-page.html',
   styleUrls: ['./profile-page.scss']
 })
 export class ProfilePageComponent implements OnInit {
   private router = inject(Router);
+  private matButtonSheet = inject(MatBottomSheet);
   private titleService = inject(TitleService);
   private firestoreService = inject(FirestoreService);
   private authService = inject(AuthService);
+  private firestore = inject(Firestore);
+  private _snackBar = inject(MatSnackBar);
 
   userProfile = signal({
     displayName: 'Olivia Bennett',
@@ -86,12 +95,12 @@ export class ProfilePageComponent implements OnInit {
             displayName: userData.displayName || 'Usuario Anónimo',
             email: userData.email || 'No email provided',
             phone: userData.phone || 'No phone number provided',
-            photoUrl: userData.photoUrl || 'https://via.placeholder.com/150'
+            photoUrl: userData.photoURL || './assets/images/user.png'
           });
 
           this.rainInsurance.set({
             active: userData.hasActiveRainInsurance || false,
-            hoursRemaining: userData.rainInsuranceExpiresAt 
+            hoursRemaining: userData.rainInsuranceExpiresAt
               ? this.firestoreService.getRainInsuranceRemainingHours(userData.rainInsuranceExpiresAt)
               : 0
           });
@@ -126,7 +135,9 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  onVehiclesClick(): void {
+  onVehiclesClick(
+
+  ): void {
     this.router.navigate(['/dashboard/vehicles/list']);
   }
 
@@ -135,13 +146,59 @@ export class ProfilePageComponent implements OnInit {
     console.log('Navegando al historial de reservas');
   }
 
-  onPersonalDetailsClick(): void {
-   // this.router.navigate(['/profile/personal-info']);
+  onPersonalPhoneNumber(): void {
+
+    const currentUser = this.authService.getCurrentUser();
+
+    if (currentUser?.uid) {
+      const bottomSheetRef = this.matButtonSheet.open(ProfilePhoneNumberSheetComponent, {
+        disableClose: true,
+              data: { currentPhoneNumber: this.userProfile().phone || null },
+      });
+
+      bottomSheetRef.afterDismissed().subscribe(async (newPhoneNumber: string | null) => {
+        if (newPhoneNumber) {
+          // Update the phone number in the user profile
+          this.userProfile.set({
+            ...this.userProfile(),
+            phone: newPhoneNumber
+          });
+
+          // Optionally, save the new phone number to Firestore
+          const currentUser = this.authService.getCurrentUser();
+          if (currentUser?.uid) {
+            try {
+              const userDocRef = doc(this.firestore, 'users', currentUser?.uid);
+              await updateDoc(userDocRef, {
+                phone: newPhoneNumber
+              });
+
+              this._snackBar.open('Teléfono cambiado actualizado exitosamente.', 'Cerrar', { duration: 2000 });
+            } catch (error) {
+                            this._snackBar.open('Error al intentar actualizar el teléfono', 'Cerrar', { duration: 2000 });
+              console.error('Error updating phone number in Firestore:', error);
+            }
+
+          }
+        }
+      });
+
+
+    }
+
+
+
+
+    // this.router.navigate(['/profile/personal-info']);
   }
 
   onHelpSupportClick(): void {
     // Navigate to help & support
-    console.log('Navegando a ayuda y soporte');
+    const phoneNumber = '573026854676';
+    const menssage = `Hola, mi nombre es ${this.userProfile().displayName} necesito ayuda con el servicio de lavado de autos en la aplicación.`;
+    const apiUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(menssage)}`;
+    window.open(apiUrl, '_blank');
+
   }
 
   goBack(): void {

@@ -9,7 +9,6 @@ export interface UserData {
     isRegistrationComplete: boolean | null;
     createdAt: Timestamp | null;
     updatedAt: Timestamp | null;
-    photoUrl: string | null;
     dateOfBirth: string | null;
     phone: string | null;
     gender: string | null;

@@ -1,0 +1,23 @@
+<div class="phone-sheet-container">
+  <h2 class="sheet-title">Actualizar número de teléfono</h2>
+  <p class="sheet-subtitle">Ingrese su nuevo número de teléfono a continuación.</p>
+
+  <form [formGroup]="phoneForm" (ngSubmit)="onSaveClick()" class="phone-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Número de Teléfono</mat-label>
+      <input matInput formControlName="phone" type="tel" required placeholder="Ej: 3001234567">
+      <mat-icon matSuffix>phone</mat-icon>
+      @if (phoneForm.get('phone')?.hasError('required') && phoneForm.get('phone')?.touched) {
+        <mat-error>El número de teléfono es requerido.</mat-error>
+      }
+      @if (phoneForm.get('phone')?.hasError('pattern') && phoneForm.get('phone')?.touched) {
+        <mat-error>Por favor, ingrese solo números.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button matButton="tonal" (click)="onCancelClick($event)" class="action-button">Cancelar</button>
+      <button matButton="filled" class="action-button" [disabled]="phoneForm.invalid">Guardar</button>
+    </div>
+  </form>
+</div>

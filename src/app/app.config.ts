@@ -12,15 +12,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
  import { getStorage, provideStorage } from '@angular/fire/storage'; // If you use Storage
 
-const firebaseConfig = {
- apiKey: "AIzaSyAdR3pxo_MZg8CYNZab-aLmvNh2iUYeTXY",
-  authDomain: "wash-r-app.firebaseapp.com",
-  projectId: "wash-r-app",
-  storageBucket: "wash-r-app.firebasestorage.app",
-  messagingSenderId: "246464851954",
-  appId: "1:246464851954:web:8459179c358b141b08456b",
-  measurementId: "G-6VZ3SP4P36"
-};
+ import { firebaseConfig } from './core/config/firebase.key'; // Ensure this points to your Firebase config
+
 
 
 export const appConfig: ApplicationConfig = {

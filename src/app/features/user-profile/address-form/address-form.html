@@ -2,33 +2,33 @@
   <h2 class="sheet-title">{{ sheetTitle }}</h2>
 
   <form [formGroup]="addressForm" (ngSubmit)="onSave()" class="address-form">
-    <!-- Address Label Field -->
+    <!-- Campo: Etiqueta de la dirección -->
     <div class="form-field-group">
-      <label class="form-field-label" for="addressLabelInput">Address Label</label>
+      <label class="form-field-label" for="addressLabelInput">Etiqueta de dirección</label>
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>e.g., Home, Work</mat-label>
+        <mat-label>Ej.: Casa, Trabajo</mat-label>
         <input matInput id="addressLabelInput" formControlName="addressLabel" required>
         @if (addressForm.get('addressLabel')?.hasError('required') && addressForm.get('addressLabel')?.touched) {
-          <mat-error>Address label is required.</mat-error>
+          <mat-error>La etiqueta de dirección es obligatoria.</mat-error>
         }
       </mat-form-field>
     </div>
 
-    <!-- Address Field -->
+    <!-- Campo: Dirección -->
     <div class="form-field-group">
-      <label class="form-field-label" for="addressInput">Address</label>
+      <label class="form-field-label" for="addressInput">Dirección</label>
       <mat-form-field appearance="outline" class="form-field full-width">
-        <mat-label>Enter your address</mat-label>
-        <input matInput id="addressInput" formControlName="address" placeholder="Enter full street address" required>
+        <mat-label>Ingresa tu dirección</mat-label>
+        <input matInput id="addressInput" formControlName="address" placeholder="Ingresa la dirección completa" required>
         @if (addressForm.get('address')?.hasError('required') && addressForm.get('address')?.touched) {
-          <mat-error>Address is required.</mat-error>
+          <mat-error>La dirección es obligatoria.</mat-error>
         }
       </mat-form-field>
     </div>
 
-    <!-- Address Icon Radio Group -->
+    <!-- Grupo de iconos de dirección -->
     <div class="form-field-group">
-      <label id="address-icon-group-label" class="form-field-label section-subtitle">Address Icon</label>
+      <label id="address-icon-group-label" class="form-field-label section-subtitle">Ícono de dirección</label>
       <mat-radio-group
         formControlName="addressIcon"
         aria-labelledby="address-icon-group-label"
@@ -42,15 +42,15 @@
         }
       </mat-radio-group>
       @if (addressForm.get('addressIcon')?.hasError('required') && addressForm.get('addressIcon')?.touched) {
-        <div class="mat-error-like-text">Icon selection is required.</div>
+        <div class="mat-error-like-text">Debes seleccionar un ícono.</div>
       }
     </div>
 
-    <!-- Action Buttons -->
+    <!-- Botones de acción -->
     <div class="form-actions">
-      <button matButton="tonal" type="button" (click)="onCancel()" class="action-button cancel-button">Cancel</button>
-      <button matButton="filled"  type="submit" class="action-button save-button">
-        {{ isEditMode ? 'Save Changes' : 'Save Address' }}
+      <button matButton="tonal" type="button" (click)="onCancel()" class="action-button cancel-button">Cancelar</button>
+      <button matButton="filled" type="submit" class="action-button save-button">
+        {{ isEditMode ? 'Guardar cambios' : 'Guardar dirección' }}
       </button>
     </div>
   </form>

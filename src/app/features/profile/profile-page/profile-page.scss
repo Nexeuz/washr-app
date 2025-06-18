@@ -16,6 +16,7 @@
   }
 }
 
+
 .profile-header {
   display: flex;
   flex-direction: column;
@@ -136,4 +137,12 @@ mat-list-item {
 
 ::ng-deep .mat-mdc-list-item-meta {
   margin-left: auto;
+}
+
+.mdc-list-item.mdc-list-item--with-two-lines .mdc-list-item__start {
+  margin-top: 0;
+}
+
+.vehicle-image {
+  background-size: 40px 40px;
 }

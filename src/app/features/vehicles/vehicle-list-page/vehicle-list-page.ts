@@ -16,12 +16,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 // Services & Firestore
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { AuthService } from '../../../core/services/auth';
 import { deleteDoc, doc, DocumentData, FirestoreDataConverter, getDoc, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { ref, Storage } from '@angular/fire/storage';
 import { deleteObject } from 'firebase/storage';
 import { TitleService } from '../../../core/services/title';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
+import { MatDialog } from '@angular/material/dialog';
 // Model for a vehicle
 interface VehicleDisplayItem {
   name: string;
@@ -69,7 +70,8 @@ const vehicleConverter: FirestoreDataConverter<VehicleDisplayItem> = {
     MatListModule,
     MatIconModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    
   ],
   templateUrl: './vehicle-list-page.html',
   styleUrls: ['./vehicle-list-page.scss'],
@@ -82,6 +84,7 @@ export class VehicleListPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   router = inject(Router);
+  private dialog = inject(MatDialog);
   private activeRoute = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private firestore = inject(Firestore);
@@ -126,57 +129,80 @@ export class VehicleListPageComponent implements OnInit, OnDestroy {
     });
   }
 
-async onAddVehicle(): Promise<void> {
+  async onAddVehicle(): Promise<void> {
     await this.router.navigate(['../add/new'], { relativeTo: this.activeRoute })
-}
+  }
 
   onEditVehicle(vehicleId: string): void {
     console.log(`Navigating to edit vehicle with ID: ${vehicleId}`);
     // Assuming you will create an edit route like /vehicles/edit/:id
     this.router.navigate(['../edit',
       this.authService.getCurrentUser()?.uid || '', vehicleId],
-       { relativeTo: this.activeRoute }
+      { relativeTo: this.activeRoute }
     );
   }
 
   async onDeleteVehicle(vehicleId: string): Promise<void> {
+
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Eliminar Vehículo',
+        message: '¿Está seguro de que desea eliminar permanentemente este vehículo?',
+        confirmButtonText: 'Eliminar'
+      } as ConfirmationDialogData,
+      width: '320px',
+    });
+
+    dialogRef.afterClosed().subscribe(async (result: boolean) => {
+      if (!result) return;
+      try {
+        if (this.authService.getCurrentUser()?.uid) {
+          const addressDocRef = doc(this.firestore, `users/${this.authService.getCurrentUser()?.uid}/vehicles/${vehicleId}`).withConverter(vehicleConverter);
+          const docSnap = await getDoc(addressDocRef);
+
+          if (!docSnap.exists()) {
+            this.snackBar.open(`Vehiculo no encontrado.`, 'Cerrar', { duration: 3000 });
+            return;
+          } else {
+
+            try {
+              const vehicleData = docSnap.data();
+
+              // Check if the vehicle has an image URL and delete it from storage
+              if (vehicleData.imageUrl) {
+                const imageRef = ref(this.storage, vehicleData.imageUrl);
+                await deleteObject(imageRef);
+
+              }
+              await deleteDoc(addressDocRef);
+              this.snackBar.open(`Vehiculo ${vehicleData.name.toLowerCase()} eliminado.`, 'Cerrar', { duration: 3000 });
+
+            } catch (error) {
+              console.error("Error deleting vehicle:", error);
+              this.snackBar.open(`Error al eliminar el vehiculo.`, 'Cerrar', { duration: 3000 });
+              return;
+
+            }
+
+          }
+
+
+
+        }
+
+        // The real-time subscription from `loadUserAddresses` will automatically update the UI.
+      } catch (error) {
+        console.error("Error deleting address:", error);
+        this.snackBar.open('Error al eliminar el vehiculo. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
+      }
+    });
+
     console.log(`Deleting vehicle with ID: ${vehicleId}`);
     // Implement deletion logic here, e.g., call a service to delete the vehicle
     // For now, we will just log it
 
-    if (this.authService.getCurrentUser()?.uid) {
-      const addressDocRef = doc(this.firestore, `users/${this.authService.getCurrentUser()?.uid}/vehicles/${vehicleId}`).withConverter(vehicleConverter);
-      const docSnap = await getDoc(addressDocRef);
 
-      if (!docSnap.exists()) {
-        this.snackBar.open(`Vehiculo no encontrado.`, 'Cerrar', { duration: 3000 });
-        return;
-      } else {
-
-        try {
-          const vehicleData = docSnap.data();
-
-          // Check if the vehicle has an image URL and delete it from storage
-          if (vehicleData.imageUrl) {
-            const imageRef = ref(this.storage, vehicleData.imageUrl);
-            await deleteObject(imageRef);
-
-          }
-          await deleteDoc(addressDocRef);
-          this.snackBar.open(`Vehiculo ${vehicleData.name.toLowerCase()} eliminado.`, 'Cerrar', { duration: 3000 });
-
-        } catch (error) {
-          console.error("Error deleting vehicle:", error);
-          this.snackBar.open(`Error al eliminar el vehiculo.`, 'Cerrar', { duration: 3000 });
-          return;
-
-        }
-
-      }
-
-
-
-    }
 
 
   }

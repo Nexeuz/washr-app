@@ -1,10 +1,14 @@
 rules_version = '2';
-
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    
+    // Coincide con archivos en vehicle_photos/{userId}/vehicles/{file}
+    match /vehicle_photos/{userId}/vehicles/{file} {
+      // Solo el usuario autenticado dueño de esa carpeta puede leer y escribir
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Opcional: denegar el resto
     match /{allPaths=**} {
       allow read, write: if false;
     }

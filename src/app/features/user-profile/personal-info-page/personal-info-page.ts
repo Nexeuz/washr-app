@@ -21,7 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
 // Firestore
-import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, collection, FirestoreDataConverter, QueryDocumentSnapshot, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, DocumentData, getDocFromCache, Timestamp, collection, FirestoreDataConverter, QueryDocumentSnapshot, deleteDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { User } from '@angular/fire/auth';
 
@@ -31,6 +31,8 @@ import { AuthService } from '../../../core/services/auth';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
+import { AddressFormComponent } from '../address-form/address-form';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 // Typed Form Interface (No password fields)
 interface PersonalInfoForm {
@@ -93,6 +95,7 @@ const addressConverter: FirestoreDataConverter<AddressDisplayItem> = {
     PageHeaderComponent,
     ListItemComponent,
     MatDatepickerModule,
+    MatBottomSheetModule
   ],
   templateUrl: './personal-info-page.html',
   styleUrls: ['./personal-info-page.scss'],
@@ -109,6 +112,7 @@ export class PersonalInfoPageComponent implements OnInit {
   private firestore = inject(Firestore);
   private _snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
+  private bottomSheet = inject(MatBottomSheet);
 
 
 
@@ -343,7 +347,7 @@ export class PersonalInfoPageComponent implements OnInit {
 
       if (onNavigatedashboard) {
         console.log('Profile data saved to Firestore:', profileDataToUpdate);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/auth/vehicles']);
       }
 
     } catch (error: any) {
@@ -357,18 +361,54 @@ export class PersonalInfoPageComponent implements OnInit {
   // 3. Implement ngOnDestroy to complete the Subject
 
   onAddAddress(): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      this.router.navigate(['/profile/add-address', currentUser.uid]);
-    } else {
-      console.error("Cannot add address: no current user.");
+
+    if (this.currentUser) {
+      this.openAddressForm(this.currentUser.uid);
     }
   }
 
   onEditAddress(addressId: string): void {
+
     if (this.currentUser) {
-      const userId = this.currentUser.uid
-      this.router.navigate(['/profile/edit-address', addressId, userId]);
+      this.openAddressForm(this.currentUser.uid, addressId);
+    }
+  }
+
+
+  openAddressForm(userId: string, addressId?: string): void {
+    if (userId) {
+      const bottomSheetRef = this.bottomSheet.open(AddressFormComponent, {
+        data: { userId: userId, addressId },
+        disableClose: true,
+        panelClass: 'custom-bottom-sheet-container' // Optional: for global styling of the sheet container
+      });
+
+      bottomSheetRef.afterDismissed().subscribe(async result => {
+        console.log('Address form sheet dismissed. Result:', result);
+        try {
+
+          if (result) {
+            if (addressId) {
+              const addressDocRef = doc(this.firestore, `users/${userId}/addresses/${addressId}`);
+              await updateDoc(addressDocRef, result);
+              console.log('Document updated with ID:', addressId);
+            } else {
+              const usersColRef = collection(this.firestore, `users/${userId}/addresses`); // 'users' collection
+              const newDocRef = await addDoc(usersColRef, {
+                ...result,
+                createdAt: serverTimestamp(),
+              });
+              console.log('Document added with ID:', newDocRef.id);
+
+            }
+          }
+
+
+
+        } catch (error) {
+          console.error('Error adding document:', error);
+        }
+      });
     } else {
       console.error("Cannot edit address: no current user.");
     }

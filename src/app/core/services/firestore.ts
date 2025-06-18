@@ -32,7 +32,7 @@ export class FirestoreService {
             uid: docSnap.id,
             displayName: data['displayName'] || '',
             email: data['email'] || '',
-            photoURL: data['photoUrl'],
+            photoURL: data['photoURL'] || null,
             phone: data['phone'] || null,
             authProviders: data['authProviders'] || [],
             isRegistrationComplete: data['isRegistrationComplete'] || false,

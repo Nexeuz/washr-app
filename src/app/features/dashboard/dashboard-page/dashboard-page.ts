@@ -15,6 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatRippleModule } from '@angular/material/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header';
 import { TitleService } from '../../../core/services/title';
+import { AuthService } from '../../../core/services/auth';
 
 // Shared Components (ensure PageHeaderComponent is also not using Tailwind for its internal layout if this is a full switch)
 
@@ -33,7 +34,6 @@ interface ServiceCard {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -48,8 +48,9 @@ export class DashboardPageComponent implements OnInit {
   @HostBinding('class.dashboard-page-host') hostClass = true;
 
   private router = inject(Router);
+  private authService = inject(AuthService); // Assuming AuthService is used for user data
   titleService = inject(TitleService); // Signal to hold breadcrumb data
-  
+
 
 
   userName = signal("Alex"); // Example user name, fetch from AuthService or a user service
@@ -78,8 +79,9 @@ export class DashboardPageComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-        this.titleService.setTitle('Inicio'); // Set the page title
-  
+     this.userName.set(this.authService.currentUserSignal()?.displayName?.split(' ')[0] || 'Usuario');  ;
+    
+            this.titleService.setTitle('Inicio'); // Set the page title  
   }
 
   handleCardAction(card: ServiceCard): void {

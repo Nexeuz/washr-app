@@ -6,6 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { User } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrl: './app.scss'
 })
 export class App {
+
 
   authService = inject(AuthService);
 
@@ -36,5 +38,7 @@ export class App {
     await this.authService.logout();
 
   }
+
+
 
 }

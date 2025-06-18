@@ -43,7 +43,7 @@ export const routes: Routes = [
             title: 'List Vehicles - Washr App'
           },
           {
-            path: 'add',
+            path: 'add/new',
             loadComponent: () => import('../vehicles/add-vehicle-page/add-vehicle-page').then(m => m.AddVehiclePageComponent),
             title: 'Add Vehicle - Washr App',
           },
@@ -107,7 +107,14 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('../profile/profile-page/profile-page').then(m => m.ProfilePageComponent),
-        data: { title: 'Mi Perfil' } // Added for TitleService
+        data: { title: 'Mi Perfil' }, // Added for TitleService,
+        children: [
+          {
+            path: 'update-phone/:userId:/:phoneNumber',
+            loadComponent: () => import('../profile/profile-phone-number-sheet/profile-phone-number-sheet').then(m => m.ProfilePhoneNumberSheetComponent),
+            title: 'Update Phone - Washr App',
+          }
+        ]
       },
       {
         path: 'vehicles',

@@ -1,120 +1,122 @@
 <div class="profile-page-container">
   @if (isLoading()) {
-    <div class="loading-container">
-      <p>Cargando perfil...</p>
-    </div>
+  <div class="loading-container">
+    <p>Cargando perfil...</p>
+  </div>
   } @else {
-    <!-- Encabezado del perfil -->
-    <header class="profile-header">
-      <div class="avatar-wrapper">
-        <img [src]="userProfile().photoUrl" [alt]="userProfile().photoUrl" class="avatar-image" />
-      </div>
-      <h2 class="profile-name">{{ userProfile().displayName }}</h2>
-    </header>
+  <!-- Encabezado del perfil -->
+  <header class="profile-header">
+    <div class="avatar-wrapper">
+      <img [src]="userProfile().photoUrl" [alt]="userProfile().photoUrl" class="avatar-image" />
+    </div>
+    <h2 class="profile-name">{{ userProfile().displayName }}</h2>
+  </header>
 
-    <!-- Sección Programa de Lealtad -->
-    <section class="section">
-      <h3 class="section-title">Programa de Lealtad</h3>
-      <mat-card class="loyalty-card">
-        <mat-card-content>
-          <p class="stamps-text">Sellos: {{ washProgress().current }}/{{ washProgress().total }}</p>
-          <div class="progress-section">
-            <p class="progress-text">
-              {{ washProgress().current }}/{{ washProgress().total }} lavados para obtener un lavado gratis
-            </p>
-            <mat-progress-bar 
-              mode="determinate" 
-              [value]="washProgress().percentage"
-              class="progress-bar">
-            </mat-progress-bar>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </section>
+  <!-- Sección Programa de Lealtad -->
+  <section class="section">
+    <h3 class="section-title">Programa de Lealtad</h3>
+    <mat-card class="loyalty-card">
+      <mat-card-content>
+        <p class="stamps-text">Sellos: {{ washProgress().current }}/{{ washProgress().total }}</p>
+        <div class="progress-section">
+          <p class="progress-text">
+            {{ washProgress().current }}/{{ washProgress().total }} lavados para obtener un lavado gratis
+          </p>
+          <mat-progress-bar mode="determinate" [value]="washProgress().percentage" class="progress-bar">
+          </mat-progress-bar>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
 
-    <!-- Sección Seguro de Lluvia -->
-    <section class="section">
-      <h3 class="section-title">Seguro de Lluvia 24 Horas</h3>
-      <mat-list>
-        <mat-list-item class="insurance-item">
-          <div matListItemTitle>
-            {{ rainInsurance().active ? 'Activo: ' + rainInsurance().hoursRemaining + ' horas restantes' : 'Inactivo' }}
-          </div>
-          <div matListItemMeta>
-            <mat-icon>info</mat-icon>
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </section>
+  <!-- Sección Seguro de Lluvia -->
+  <section class="section">
+    <h3 class="section-title">Seguro de Lluvia 24 Horas</h3>
+    <mat-list>
+      <mat-list-item class="insurance-item">
+        <div matListItemTitle>
+          {{ rainInsurance().active ? 'Activo: ' + rainInsurance().hoursRemaining + ' horas restantes' : 'Inactivo' }}
+        </div>
+        <div matListItemMeta>
+          <mat-icon>info</mat-icon>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </section>
 
-    <!-- Sección Vehículos -->
-    <section class="section">
-      <h3 class="section-title">Vehículos</h3>
-      <mat-list>
-        @if (vehicles().length > 0) {
-          @for (vehicle of vehicles(); track vehicle.id) {
-            <mat-list-item class="vehicle-item" (click)="onVehiclesClick()">
-              <div matListItemAvatar>
-                <mat-icon class="vehicle-icon">directions_car</mat-icon>
-              </div>
-              <div matListItemTitle>Placa: {{ vehicle.licensePlate }}</div>
-              <div matListItemLine>{{ vehicle.name }}</div>
-              <div matListItemMeta>
-                <mat-icon>arrow_forward_ios</mat-icon>
-              </div>
-            </mat-list-item>
+  <!-- Sección Vehículos -->
+  <section class="section">
+    <h3 class="section-title">Vehículos</h3>
+    <mat-list>
+      @if (vehicles().length > 0) {
+      @for (vehicle of vehicles(); track vehicle.id) {
+      <mat-list-item class="vehicle-item" (click)="onVehiclesClick()">
+        <div matListItemAvatar>
+          @if (vehicle.type =='motorcycle') {
+          <mat-icon class="vehicle-icon">two_wheeler</mat-icon>
+          } @else {
+          <mat-icon class="vehicle-icon">directions_car</mat-icon>
+
           }
-        } @else {
-          <mat-list-item>
-            <div matListItemTitle>No hay vehículos registrados</div>
-          </mat-list-item>
-        }
-      </mat-list>
-    </section>
+        </div>
+        <div matListItemTitle>Placa: {{ vehicle.licensePlate }}</div>
+        <div matListItemLine>{{ vehicle.name }}</div>
+        <div matListItemMeta>
+          <mat-icon>arrow_forward_ios</mat-icon>
+        </div>
+      </mat-list-item>
+      }
+      } @else {
+      <mat-list-item>
+        <div matListItemTitle>No hay vehículos registrados</div>
+      </mat-list-item>
+      }
+    </mat-list>
+  </section>
 
-    <!-- Historial de Reservas -->
-    <section class="section">
-      <h3 class="section-title">Historial de Reservas</h3>
-      <mat-list>
-        <mat-list-item class="clickable-item" (click)="onBookingHistoryClick()">
-          <div matListItemTitle>Ver historial de reservas</div>
-          <div matListItemMeta>
-            <mat-icon>arrow_forward_ios</mat-icon>
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </section>
+  <!-- Historial de Reservas -->
+  <section class="section">
+    <h3 class="section-title">Historial de Reservas</h3>
+    <mat-list>
+      <mat-list-item class="clickable-item" (click)="onBookingHistoryClick()">
+        <div matListItemTitle>Ver historial de reservas</div>
+        <div matListItemMeta>
+          <mat-icon>arrow_forward_ios</mat-icon>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </section>
 
-    <!-- Datos Personales -->
-    <section class="section">
-      <h3 class="section-title">Datos Personales</h3>
-      <mat-list>
-        <mat-list-item>
-          <div matListItemTitle>Nombre: {{ userProfile().displayName }}</div>
-        </mat-list-item>
-        <mat-list-item>
-          <div matListItemTitle>Correo: {{ userProfile().email }}</div>
-        </mat-list-item>
-        <mat-list-item class="clickable-item" (click)="onPersonalDetailsClick()">
-          <div matListItemTitle>Teléfono: {{ userProfile().phone }}</div>
-          <div matListItemMeta>
-            <mat-icon>arrow_forward_ios</mat-icon>
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </section>
+  <!-- Datos Personales -->
+  <section class="section">
+    <h3 class="section-title">Datos Personales</h3>
+    <mat-list>
+      <mat-list-item>
+        <div matListItemTitle>Nombre: {{ userProfile().displayName }}</div>
+      </mat-list-item>
+      <mat-list-item>
+        <div matListItemTitle>Correo: {{ userProfile().email }}</div>
+      </mat-list-item>
+      <mat-list-item class="clickable-item" (click)="onPersonalPhoneNumber()">
+        <div matListItemTitle>Teléfono: {{ userProfile().phone }}</div>
+        <div matListItemMeta>
+          <mat-icon>arrow_forward_ios</mat-icon>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </section>
 
-    <!-- Configuración -->
-    <section class="section">
-      <h3 class="section-title">Configuración</h3>
-      <mat-list>
-        <mat-list-item class="clickable-item" (click)="onHelpSupportClick()">
-          <div matListItemTitle>Ayuda y Soporte</div>
-          <div matListItemMeta>
-            <mat-icon>arrow_forward_ios</mat-icon>
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </section>
+  <!-- Configuración -->
+  <section class="section">
+    <h3 class="section-title">Configuración</h3>
+    <mat-list>
+      <mat-list-item class="clickable-item" (click)="onHelpSupportClick()">
+        <div matListItemTitle>Ayuda y Soporte</div>
+        <div matListItemMeta>
+          <mat-icon>arrow_forward_ios</mat-icon>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </section>
   }
 </div>

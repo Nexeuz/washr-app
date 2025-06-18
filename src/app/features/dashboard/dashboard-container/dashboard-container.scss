@@ -16,6 +16,7 @@
 
 // Main content area that scrolls
 .dashboard-content {
+      background-color: var(--mat-app-background-color, #f9fafb);
   flex-grow: 1;
   overflow-y: auto;
   padding: 1rem; // p-4

@@ -46,39 +46,7 @@ export class EditAddressPageComponent implements OnInit, OnDestroy {
   }
 
   openAddressSheet(userId: string | null, addressId?: string | null): void {
-    const bottomSheetRef = this.bottomSheet.open(AddressFormComponent, {
-      data: { userId, addressId },
-      disableClose: true,
-      panelClass: 'custom-bottom-sheet-container' // Optional: for global styling of the sheet container
-    });
-
-    bottomSheetRef.afterDismissed().subscribe(async result => {
-      console.log('Address form sheet dismissed. Result:', result);
-      try {
-
-        if (result) {
-          if (this.addressId) {
-            const addressDocRef = doc(this.firestore, `users/${userId}/addresses/${this.addressId}`);
-            await updateDoc(addressDocRef, result);
-            console.log('Document updated with ID:', this.addressId);
-          } else {
-            const usersColRef = collection(this.firestore, `users/${userId}/addresses`); // 'users' collection
-            const newDocRef = await addDoc(usersColRef, {
-              ...result,
-              createdAt: serverTimestamp(),
-            });
-            console.log('Document added with ID:', newDocRef.id);
-
-          }
-        }
-
-
-
-      } catch (error) {
-        console.error('Error adding document:', error);
-      }
-      this.router.navigate(['/profile/personal-info']);
-    });
+  
   }
 
   handleHeaderBackClick(): void {

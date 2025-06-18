@@ -1,0 +1,30 @@
+.phone-sheet-container {
+  padding: 1.5rem;
+}
+
+
+.sheet-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.phone-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  text-transform: none !important;
+}
