@@ -13,11 +13,13 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
  import { getStorage, provideStorage } from '@angular/fire/storage'; // If you use Storage
 
  import { firebaseConfig } from './core/config/firebase.key'; // Ensure this points to your Firebase config
+import { LoadingService } from './core/services/loading.service';
 
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    LoadingService,
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes,

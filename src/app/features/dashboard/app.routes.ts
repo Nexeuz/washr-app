@@ -82,16 +82,6 @@ export const routes: Routes = [
           ).then((m) => m.PersonalInfoPageComponent),
         title: 'Personal Information - Washr App'
       },
-      {
-        path: 'add-address/:userId',
-        loadComponent: () => import('../user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
-        title: 'New Address - Washr App',
-      },
-      {
-        path: 'edit-address/:id/:userId',
-        loadComponent: () => import('../user-profile/edit-address-page/edit-address-page').then(m => m.EditAddressPageComponent),
-        title: 'Edit Address - Washr App',
-      },
     ],
   },
 

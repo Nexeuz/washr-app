@@ -33,6 +33,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
 import { AddressFormComponent } from '../address-form/address-form';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { LoadingService } from '../../../core/services/loading.service';
 
 // Typed Form Interface (No password fields)
 interface PersonalInfoForm {
@@ -113,7 +114,7 @@ export class PersonalInfoPageComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private bottomSheet = inject(MatBottomSheet);
-
+  private loadingService = inject(LoadingService); // Assuming you have a loading service for UI feedback
 
 
   // 1. Create a Subject to signal component destruction
@@ -192,6 +193,8 @@ export class PersonalInfoPageComponent implements OnInit {
   }
 
   async checkAndLoadUserProfile(currentUser: User): Promise<void> {
+    this.loadingService.showLoading(); // Show loading spinner
+
 
     this.currentUser = currentUser;
 
@@ -271,10 +274,13 @@ export class PersonalInfoPageComponent implements OnInit {
     } catch (error) {
       console.error("PersonalInfoPage: Error checking/loading user profile:", error);
       // Potentially navigate to an error page or show a notification
+    } finally {
+      this.loadingService.hideLoading(); // Hide loading spinner
     }
   }
 
   async loadUserAddresses(userId: string): Promise<void> {
+    this.loadingService.showLoading(); // Show loading spinner
     //   // Conceptual: fetch addresses from users/{userId}/addresses
     const addressesSnapshot = collection(this.firestore, `users/${userId}/addresses`).withConverter(addressConverter);
 
@@ -291,6 +297,9 @@ export class PersonalInfoPageComponent implements OnInit {
       error: (error) => {
         console.error("Error fetching addresses:", error);
         this._snackBar.open('No se pudieron cargar las direcciones.', 'Cerrar', { duration: 3000 });
+      },
+      complete: () => {
+        this.loadingService.hideLoading(); // Hide loading spinner when done
       }
     });
 
@@ -317,6 +326,8 @@ export class PersonalInfoPageComponent implements OnInit {
 
 
   async onSaveFirestore(onNavigatedashboard = false, isProfileCompletionMode = false): Promise<void> {
+    this.loadingService.showLoading(); // Show loading spinner
+
     const formData = this.personalInfoForm.getRawValue(); // Use getRawValue for all fields, including disabled email
 
     this.checkLoginStatus();
@@ -349,11 +360,14 @@ export class PersonalInfoPageComponent implements OnInit {
         console.log('Profile data saved to Firestore:', profileDataToUpdate);
         this.router.navigate(['/auth/vehicles']);
       }
+      this._snackBar.open('Error al guardar el perfil. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
 
     } catch (error: any) {
       console.error('Error saving profile:', error);
       this._snackBar.open('Error al guardar el perfil. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
       // Handle save error (e.g., show notification)
+    } finally {
+      this.loadingService.hideLoading(); // Hide loading spinner
     }
   }
 
@@ -384,8 +398,10 @@ export class PersonalInfoPageComponent implements OnInit {
       });
 
       bottomSheetRef.afterDismissed().subscribe(async result => {
+        this.loadingService.showLoading(); // Show loading spinner
         console.log('Address form sheet dismissed. Result:', result);
         try {
+          this.loadingService.showLoading(); // Show loading spinner
 
           if (result) {
             if (addressId) {
@@ -407,6 +423,8 @@ export class PersonalInfoPageComponent implements OnInit {
 
         } catch (error) {
           console.error('Error adding document:', error);
+        } finally {
+          this.loadingService.hideLoading(); // Hide loading spinner
         }
       });
     } else {
@@ -426,6 +444,7 @@ export class PersonalInfoPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
       if (!result) return;
       try {
+        this.loadingService.showLoading(); // Show loading spinner
         this.checkLoginStatus();
         if (this.currentUser) {
           const addressDocRef = doc(this.firestore, `users/${this.currentUser.uid}/addresses/${addressId}`);
@@ -437,6 +456,8 @@ export class PersonalInfoPageComponent implements OnInit {
       } catch (error) {
         console.error("Error deleting address:", error);
         this._snackBar.open('Error al eliminar la dirección. Por favor, inténtelo de nuevo.', 'Cerrar', { duration: 3000 });
+      } finally {
+        this.loadingService.hideLoading(); // Hide loading spinner
       }
     });
   }

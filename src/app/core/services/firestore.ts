@@ -1,15 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import {  collection, doc, getDoc, getDocs, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { Firestore } from '@angular/fire/firestore';
-import { Observable, from, map, catchError, of, firstValueFrom, switchMap, forkJoin } from 'rxjs';
+import { Observable, from, map, catchError, of, switchMap, forkJoin, finalize } from 'rxjs';
 import { UserData } from '../model/user-data';
 import { Vehicle } from '../model/vehicle';
 import { WashProgress, WashRecord } from '../model/whash-type';
-
-
-
-
-
+import { LoadingService } from './loading.service';
 
 
 
@@ -17,10 +13,12 @@ import { WashProgress, WashRecord } from '../model/whash-type';
   providedIn: 'root'
 })
 export class FirestoreService {
+    private loadingService = inject(LoadingService); // Inject the LoadingService
   private firestore = inject(Firestore);
 
   // Get user data by user ID
   getUserData(userId: string): Observable< UserData | null> {
+        this.loadingService.showLoading(); // Show loading spinner
     const userDocRef = doc(this.firestore, 'users', userId);
 
     
@@ -51,12 +49,14 @@ export class FirestoreService {
       catchError(error => {
         console.error('Error getting user data:', error);
         return of(null);
-      })
+      }),
+      finalize(() => this.loadingService.hideLoading()) // Hide loading spinner on completion or error
     );
   }
 
   // Get vehicles for a specific user
   getUserVehicles(userId: string): Observable<Vehicle[]> {
+            this.loadingService.showLoading(); // Show loading spinner
     const vehiclesRef = collection(this.firestore, 'users', userId, 'vehicles'); // Updated path
     const vehiclesQuery = query(
       vehiclesRef,
@@ -84,12 +84,14 @@ export class FirestoreService {
       catchError(error => {
         console.error('Error getting user vehicles:', error);
         return of([]);
-      })
+      }),
+      finalize(() => this.loadingService.hideLoading()) // Hide loading spinner on completion or error
     );
   }
 
   // Get wash records for a user to calculate progress towards free wash
   getUserWashRecords(userId: string): Observable<WashRecord[]> {
+                this.loadingService.showLoading(); // Show loading spinner
     const washesRef = collection(this.firestore, 'washes');
     const washesQuery = query(
       washesRef,
@@ -116,6 +118,7 @@ export class FirestoreService {
         });
         return washes;
       }),
+      finalize(() => this.loadingService.hideLoading()), // Hide loading spinner on completion or error
       catchError(error => {
         console.error('Error getting wash records:', error);
         return of([]);
@@ -162,6 +165,7 @@ export class FirestoreService {
     washProgress: WashProgress;
     rainInsuranceHours: number;
   }> {
+   this.loadingService.showLoading(); // Show loading spinner
     return this.getUserData(userId).pipe(
       switchMap(userData => {
         if (!userData) {
@@ -198,7 +202,8 @@ export class FirestoreService {
           washProgress: { current: 0, total: 10, percentage: 0 },
           rainInsuranceHours: 0
         });
-      })
+      }),
+      finalize(() => this.loadingService.hideLoading()), // Hide loading spinner on completion or error
     );
   }
 }

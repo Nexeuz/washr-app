@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth';
+import { LoadingService } from '../../../core/services/loading.service';
 
 @Component({
   selector: 'app-sign-in-page',
@@ -23,9 +24,11 @@ export class SignInPageComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   signInError = signal<string | null>(null);
+  loading = inject(LoadingService);
 
   async onContinueWith(method: 'Google' | 'Facebook' | 'Email'): Promise<void> {
     this.signInError.set(null);
+    this.loading.showLoading(); // Show loading spinner
     try {
       switch (method) {
         case 'Google':
@@ -42,6 +45,9 @@ export class SignInPageComponent {
       }
     } catch (error: any) {
       this.signInError.set(this.authService.mapFirebaseError(error.code));
+    } finally {
+      // Optionally, you can handle any additional logic after the sign-in attempt
+          this.loading.hideLoading(); // Show loading spinner
     }
   }
 }

@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth';
+import { LoadingService } from '../../../core/services/loading.service';
 
 interface LoginForm {
   email: FormControl<string | null>;
@@ -35,6 +36,7 @@ export class LoginPageComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private loading = inject(LoadingService); // Assuming you have a loading service
 
   loginForm!: FormGroup<LoginForm>; // Keep your LoginForm interface
   loginError = signal<string | null>(null);
@@ -65,6 +67,7 @@ export class LoginPageComponent implements OnInit {
   }
   
   async onSocialLogin(provider: 'Google' | 'Facebook'): Promise<void> {
+    this.loading.showLoading(); // Show loading spinner
     this.loginError.set(null);
     try {
       if (provider === 'Google') await this.authService.loginWithGoogle();
@@ -72,6 +75,8 @@ export class LoginPageComponent implements OnInit {
       this.router.navigate(['/profile/personal-info']); // Or your main app page
     } catch (error: any) {
       this.loginError.set(this.authService.mapFirebaseError(error.code));
-    }
+    } finally {
+      this.loading.hideLoading(); // Hide loading spinner
+    } 
   }
 }
